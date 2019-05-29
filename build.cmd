@@ -18,7 +18,7 @@ IF ERRORLEVEL 1 GOTO ERROR
 del wait-registry.obj
 
 rem   vsce package
-rem   vsce publish
+rem   vsce publish major/minor/patch
 rem   code --install-extension auto-dark-mode-windows-*.vsix
 
 GOTO END

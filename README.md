@@ -10,7 +10,7 @@ https://marketplace.visualstudio.com/items?itemName=danielgjackson.auto-dark-mod
 
 * Command *Toggle Theme* (`auto-dark-mode-windows.toggle`) with default hot-key `Ctrl`+`Alt`+`Shift`+`T` to manually toggle light/dark theme.
 
-![Automatic Switching](icon.png)
+<!-- ![Automatic Switching](icon.png) -->
 
 ## Requirements
 
