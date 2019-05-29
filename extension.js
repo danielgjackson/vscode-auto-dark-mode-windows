@@ -1,20 +1,58 @@
 const vscode = require('vscode');
+//const path = require('path');
+const fs = require('fs');
 const child_process = require('child_process');
 
-// TODO: Use an API to query the registry (and not spawn a process): HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize AppsUseLightTheme REG_DWORD:0
-// TODO: Instead of polling, use RegNotifyChangeKeyValue() or WM_WININICHANGE / WM_SETTINGCHANGE messages.
+let terminating = false;
+let process = null;
+let buffer = "";
 
-// Yuck, horrible spawned process that will be polled -- TODO: Remove this rubbish!
-async function isDarkMode() {
-	return new Promise(function(resolve, reject) {
-		const options = {};
-		function callback(error, stdout, stderr) {
-			const regexDarkMode = /^\s*AppsUseLightTheme\s+REG_DWORD\s+0x0\s*$/gm;
-			const darkMode = stdout.match(regexDarkMode) !== null;
-			resolve(darkMode);
+function spawnProcess(context) {
+	try {
+		//const queryDarkCommand = path.join(__dirname, 'query-dark.cmd');
+		const queryDarkCommand = context.asAbsolutePath('query-dark.cmd');
+		if (!fs.existsSync(queryDarkCommand)) {
+			console.error(`Dark mode: Command script not found: ${queryDarkCommand}`);
+			return false;
 		}
-		child_process.exec('reg.exe query HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize /v AppsUseLightTheme', options, callback);
-	});
+		const options = {
+			stdio: [
+				null,
+				'pipe',
+				'pipe',
+			]
+		}
+		//console.log('Spawning: ', queryDarkCommand);
+		process = child_process.spawn('cmd.exe', ['/c', queryDarkCommand], options);
+
+		process.stdout.on('data', (data) => {
+			buffer += data;
+			let idx;
+			while ((idx = buffer.indexOf('\n')) >= 0) {
+				const line = buffer.substr(0, idx).trim();
+				buffer = buffer.substr(idx + 1);
+				const value = parseInt(line);
+				if (value !== 0 || line === "0") {
+					matchDarkMode(value == 0);
+				} else {
+					console.log(`Dark mode: unexpected stdout: ${data}`);
+				}
+			}
+		});
+		process.stderr.on('data', (data) => {
+			console.error(`Dark mode: stderr: ${data}`);
+		});
+		process.on('close', (code) => {
+			if (!terminating) {
+				console.error(`Dark mode: unexpected exit: ${code}`);
+				vscode.window.showErrorMessage(`Error matching theme to dark mode`);
+			}
+		});
+		return true;
+	} catch (e) {
+		console.error(e);
+		return false;
+	}
 }
 
 function isDarkTheme() {
@@ -23,7 +61,7 @@ function isDarkTheme() {
 	return currentTheme === darkTheme;
 }
 
-function setDarkTheme(isDark) {
+function setTheme(isDark) {
 	const currentTheme = vscode.workspace.getConfiguration('workbench').get('colorTheme');
 	const themeConfiguration = vscode.workspace.getConfiguration('autoDarkMode');
 	const newTheme = themeConfiguration.get(isDark ? 'darkTheme' : 'lightTheme');
@@ -34,50 +72,50 @@ function setDarkTheme(isDark) {
 	return null;
 }
 
-async function matchDarkMode() {
+async function matchDarkMode(dark) {
 	try {
-		const dark = await isDarkMode();
-		if (lastMode !== dark) {	// Only react to changes (allows manual toggle)
-			lastMode = dark;
-			if (setDarkTheme(dark) !== null) {
-				vscode.window.showInformationMessage(`Switched theme to ${dark ? 'dark' : 'light'} to match Windows.`);
-			}
+		if (setTheme(dark) !== null) {
+			vscode.window.showInformationMessage(`Switched theme to ${dark ? 'dark' : 'light'} to match Windows.`);
 		}
 	} catch(e) {
 		console.error(e);
-		vscode.window.showInformationMessage(`Error matching theme to dark mode`);
+		vscode.window.showErrorMessage(`Error matching theme to dark mode`);
 	}
 }
 
 async function toggleTheme() {
 	try {
 		const dark = !isDarkTheme();
-		if (setDarkTheme(dark) !== null) {
+		if (setTheme(dark) !== null) {
 			vscode.window.showInformationMessage(`Toggled theme to ${dark ? 'dark' : 'light'}.`);
 		}
 	} catch(e) {
 		console.error(e);
-		vscode.window.showInformationMessage(`Error toggling theme`);
+		vscode.window.showErrorMessage(`Error toggling theme`);
 	}
 }
 
 
-
-let timerId = null;
-let lastMode = null;		// Track system dark mode - only react to changes (allows manual toggle)
-
 function activate(context) {
-	console.log('"auto-dark-mode-windows" activated.');
+	//console.log('"auto-dark-mode-windows" activated');
 	let disposable = vscode.commands.registerCommand('auto-dark-mode-windows.toggle', toggleTheme);
-	timerId = setInterval(matchDarkMode, 10000);
-	matchDarkMode();
+
+	terminating = false;
+	if (!spawnProcess(context)) {
+		vscode.window.showErrorMessage(`Error spawning dark mode monitoring process`);
+	}
+
 	context.subscriptions.push(disposable);
 }
 
 function deactivate() {
-	console.log('"auto-dark-mode-windows" deactivated.');
-	clearInterval(timerId);
-	timerId = null;
+	//console.log('"auto-dark-mode-windows" deactivating');
+	if (process !== null) {
+		terminating = true;
+		process.kill('SIGINT');	// 'SIGTERM', 'SIGINT', 'SIGHUP'
+		process = null;
+	}
+	return undefined;	// synchronous shutdown
 }
 
 module.exports = {
