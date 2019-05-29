@@ -1,5 +1,9 @@
 # Auto dark-mode on Windows
 
+<!--
+https://marketplace.visualstudio.com/items?itemName=danielgjackson.auto-dark-mode-windows
+-->
+
 ## Features
 
 * Automatically switch dark/light themes to match Windows Dark Mode.
@@ -10,7 +14,7 @@
 
 ## Requirements
 
-Only works on Windows 10.
+Only works on *Windows 10 October 2018 Update* (and later).  For a *macOS Mojave* version see: [auto-dark-mode](https://marketplace.visualstudio.com/items?itemName=LinusU.auto-dark-mode&ssr=false) (which partly inspired this extension).
 
 ## Extension Settings
 
