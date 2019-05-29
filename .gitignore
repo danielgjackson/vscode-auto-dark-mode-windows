@@ -1,3 +1,4 @@
 node_modules
 /*.obj
 /*.vsix
+/wait-registry.exe
