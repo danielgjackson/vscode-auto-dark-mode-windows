@@ -1,7 +1,7 @@
 {
 	"name": "auto-dark-mode-windows",
-	"displayName": "auto-dark-mode-windows",
-	"description": "Toggle theme to dark/light automatically with Windows 10 dark mode.",
+	"displayName": "Automatic Theme Switcher for Windows Dark Mode",
+	"description": "Toggle theme to dark/light automatically to match Windows 10 dark mode.",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/danielgjackson/vscode-auto-dark-mode-windows.git"
