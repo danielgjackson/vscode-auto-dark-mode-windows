@@ -1,5 +1,5 @@
 # Change Log
 
-## [Unreleased]
+## 1.0.0
 
-- Initial release (currently uses horrible polling of registry via spawned process!)
+- Initial release

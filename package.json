@@ -4,7 +4,7 @@
 	"description": "Toggle theme to dark/light automatically with Windows 10 dark mode.",
 	"repository": "https://github.com/danielgjackson/vscode-auto-dark-mode-windows.git",
 	"publisher": "danielgjackson",
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"license": "MIT",
 	"engines": {
 		"vscode": "^1.34.0"
@@ -33,31 +33,32 @@
 			}
 		],
         "keybindings": [
-            {
-                "command": "auto-dark-mode-windows.toggle",
-                "key": "ctrl+alt+shift+t",
-                "mac": "cmd+alt+shift+t"
-            }
+			{
+				"command": "auto-dark-mode-windows.toggle",
+				"key": "ctrl+alt+shift+t",
+				"mac": "cmd+alt+shift+t"
+			}
 		],
 		"configuration": {
 			"title": "Auto Dark Mode (Windows)",
 			"properties": {
-			  "autoDarkMode.darkTheme": {
-				"type": "string",
-				"default": "Default Dark+",
-				"description": "Specifies which theme is to be shown when dark mode is on."
-			  },
-			  "autoDarkMode.lightTheme": {
-				"type": "string",
-				"default": "Default Light+",
-				"description": "Specifies which theme is to be shown when dark mode is off."
-			  }
+				"autoDarkMode.darkTheme": {
+					"type": "string",
+					"default": "Default Dark+",
+					"description": "Specifies which theme is to be shown when dark mode is on."
+				},
+				"autoDarkMode.lightTheme": {
+					"type": "string",
+					"default": "Default Light+",
+					"description": "Specifies which theme is to be shown when dark mode is off."
+				}
 			}
 		}
 	},
 	"scripts": {
 		"postinstall": "node ./node_modules/vscode/bin/install",
-		"test": "node ./node_modules/vscode/bin/test"
+		"test": "node ./node_modules/vscode/bin/test",
+		"vscode:prepublish": "build.cmd"
 	},
 	"devDependencies": {
 		"typescript": "^3.3.1",

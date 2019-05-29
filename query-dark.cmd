@@ -2,12 +2,10 @@
 SETLOCAL
 CD /D %~dp0
 
-rem Run efficient executable if present, otherwise run rubbish polling method
-IF NOT EXIST "wait-registry.exe" GOTO NO_EXECUTABLE
-"wait-registry.exe" "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" "AppsUseLightTheme" *
-GOTO END
+rem NOTE: Use "wait-registry.exe" instead as it efficiently waits for the registry change.
+rem "wait-registry.exe" "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" "AppsUseLightTheme" *
+rem This batch file is an alternative (rubbish) polling method.
 
-:NO_EXECUTABLE
 SET LASTRESULT=
 
 :LOOP
