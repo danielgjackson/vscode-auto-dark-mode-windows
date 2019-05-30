@@ -1,8 +1,4 @@
-# Auto dark-mode on Windows
-
-<!--
-https://marketplace.visualstudio.com/items?itemName=danielgjackson.auto-dark-mode-windows
--->
+# Automatic Theme Switcher for Windows Dark Mode - VS Code Extension
 
 ## Features
 
@@ -31,3 +27,7 @@ None
 
 See [Change Log](CHANGELOG.md)
 
+## Links
+
+* Visual Studio Marketplace: [Automatic Theme Switcher for Windows Dark Mode](https://marketplace.visualstudio.com/items?itemName=danielgjackson.auto-dark-mode-windows
+)

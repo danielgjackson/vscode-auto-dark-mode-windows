@@ -7,8 +7,9 @@ const child_process = require('child_process');
 let terminating = false;
 let process = null;
 let outBuffer = "";
+let pendingAction = null;
 
-const lockFilePath = path.join(os.tmpdir(), 'vscode-auto-dark-mode-lock');
+const lockFilePath = path.join(os.tmpdir(), 'vscode-auto-dark-mode-windows.lock');
 
 function spawnProcess(context) {
 	try {
@@ -67,10 +68,7 @@ function spawnProcess(context) {
 async function killProcess() {
 	if (process !== null) {
 		terminating = true;
-		//process.kill('SIGHUP');
-		//process.kill('SIGINT');
-		//process.kill('SIGTERM');
-		process.kill('SIGKILL');
+		process.kill('SIGINT'); // 'SIGHUP', 'SIGINT', 'SIGTERM', 'SIGKILL'
 		process = null;
 	}
 }
@@ -82,37 +80,53 @@ function isDarkTheme() {
 }
 
 async function setTheme(isDark, delay, complete) {
-	const currentTheme = vscode.workspace.getConfiguration('workbench').get('colorTheme');
-	const themeConfiguration = vscode.workspace.getConfiguration('autoDarkMode');
-	const newTheme = themeConfiguration.get(isDark ? 'darkTheme' : 'lightTheme');
-	if (newTheme !== currentTheme) {
-		// Use a lock-file to make sure we only do this in one instance of VS Code
-		let lockFile = null;
+	// cope with change request during settle delay
+	pendingAction = { isDark, delay, complete };
+
+	// Use a lock-file to make sure we only do this in one instance of VS Code
+	let lockFile = null;
+	try {
+		// Try to clean a stale lock file (will fail if held by another)
 		try {
-			lockFile = fs.openSync(lockFilePath, 'wx+');
-			vscode.workspace.getConfiguration('workbench').update('colorTheme', newTheme, vscode.ConfigurationTarget.Global)
-			if (complete) { complete(); }
-			if (delay) {
-				// Delay a little while in the lock so other instances will lose the race
-				await new Promise((resolve) => setTimeout(resolve, 5000));
-			}
-			return isDark;
-		} catch(e) {
-			return undefined;
-		} finally {
-			if (lockFile != null) { await fs.close(lockFile); }
 			if (fs.existsSync(lockFilePath)) {
 				fs.unlinkSync(lockFilePath);
 			}
+		} catch(e) { ; }
+
+		lockFile = fs.openSync(lockFilePath, 'wx+');
+		for (;;) {
+			const action = pendingAction;
+			const currentTheme = vscode.workspace.getConfiguration('workbench').get('colorTheme');
+			const themeConfiguration = vscode.workspace.getConfiguration('autoDarkMode');
+			let newTheme = themeConfiguration.get(action.isDark ? 'darkTheme' : 'lightTheme');
+			if (newTheme !== currentTheme) {
+				vscode.workspace.getConfiguration('workbench').update('colorTheme', newTheme, vscode.ConfigurationTarget.Global);
+				if (action.complete) { action.complete(action.isDark); }
+				if (action.delay) {
+					// Delay a little while in the lock so other instances will lose the race
+					await new Promise((resolve) => setTimeout(resolve, 5000));
+				}
+			}
+			// Check no other changes while we were busy
+			if (action === pendingAction) {
+				return action.isDark;
+			}
+		}
+	} catch(e) {
+		// Could not lock (pending action)
+		return undefined;
+	} finally {
+		try { if (lockFile != null) { fs.closeSync(lockFile); } } catch (e) { ; }
+		if (fs.existsSync(lockFilePath)) {
+			try { if (lockFile != null) { fs.unlinkSync(lockFilePath); } } catch (e) { ; }
 		}
 	}
-	return null;
 }
 
 async function matchDarkMode(dark) {
 	try {
-		function switched() {
-			vscode.window.setStatusBarMessage(`Switched theme to ${dark ? 'dark' : 'light'} to match Windows. 'Toggle Theme' command to switch back.`);
+		function switched(isDark) {
+			vscode.window.setStatusBarMessage(`Switched theme to ${isDark ? 'dark' : 'light'} to match Windows. 'Toggle Theme' command to switch back.`);
 		}
 		
 		const result = await setTheme(dark, true, switched);
@@ -122,20 +136,17 @@ async function matchDarkMode(dark) {
 		}
 	} catch(e) {
 		console.error(e);
-		vscode.window.showErrorMessage(`Problem while trying to matching theme to ${dark ? 'dark' : 'light'}`);
+		vscode.window.showErrorMessage(`Problem while matching theme to ${dark ? 'dark' : 'light'}`);
 	}
 }
 
 async function toggleTheme() {
 	try {
 		const dark = !isDarkTheme();
-		function toggled() {
-			vscode.window.setStatusBarMessage(`Toggled theme to ${dark ? 'dark' : 'light'}.`);
+		function toggled(isDark) {
+			vscode.window.setStatusBarMessage(`Toggled theme to ${isDark ? 'dark' : 'light'}.`);
 		}
-		const result = await setTheme(dark, false, toggled);
-		if (result === null || result === undefined) {
-			vscode.window.showErrorMessage(`Theme switching already in progress`);
-		}
+		await setTheme(dark, false, toggled);
 	} catch(e) {
 		console.error(e);
 		vscode.window.showErrorMessage(`Error toggling theme`);
@@ -161,13 +172,6 @@ function activate(context) {
 	//console.log('"auto-dark-mode-windows" activated');
 	let disposable = vscode.commands.registerCommand('auto-dark-mode-windows.toggle', toggleTheme);
 	context.subscriptions.push(disposable);
-
-	// Clean any stale lock file
-	try {
-		if (fs.existsSync(lockFilePath)) {
-			fs.unlinkSync(lockFilePath);
-		}
-	} catch(e) { ; }
 
 	context.subscriptions.push({ dispose: killProcess() });
 	if (!spawnProcess(context)) {

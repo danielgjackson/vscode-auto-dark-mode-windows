@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.0.3
+
+- Robustly handles multiple/rapid dark mode switches.
+
 ## 1.0.2
 
 - Uses status bar for information rather than information messages.
