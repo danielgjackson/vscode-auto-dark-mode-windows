@@ -29,5 +29,6 @@ See [Change Log](CHANGELOG.md)
 
 ## Links
 
-* Visual Studio Marketplace: [Automatic Theme Switcher for Windows Dark Mode](https://marketplace.visualstudio.com/items?itemName=danielgjackson.auto-dark-mode-windows
+* [GitHub Page: danielgjackson/vscode-auto-dark-mode-windows](https://github.com/danielgjackson/vscode-auto-dark-mode-windows)
+* [Visual Studio Marketplace: Automatic Theme Switcher for Windows Dark Mode](https://marketplace.visualstudio.com/items?itemName=danielgjackson.auto-dark-mode-windows
 )
