@@ -155,26 +155,16 @@ async function toggleTheme() {
 
 
 function activate(context) {
-	if (os.platform() !== 'win32') {
-		vscode.window.showErrorMessage(`Dark mode: This extension only works on Windows.`);
-		return;
-	}
-	const release = os.release().split('.').map(x => parseInt(x));	
-	if (release.length < 3 || release[0] < 10) {
-		vscode.window.showErrorMessage(`Dark mode: This extension only works on Windows 10.`);
-		return;
-	}
-	if (release[0] === 10 && release[1] === 0 && release[2] < 17763) {
-		vscode.window.showErrorMessage(`Dark mode: This extension requires at least the October 2018 update of Windows 10.`);
-		return;
-	}
-	
 	//console.log('"auto-dark-mode-windows" activated');
 	let disposable = vscode.commands.registerCommand('auto-dark-mode-windows.toggle', toggleTheme);
 	context.subscriptions.push(disposable);
 
 	context.subscriptions.push({ dispose: killProcess() });
-	if (!spawnProcess(context)) {
+
+	const release = os.release().split('.').map(x => parseInt(x));
+	if (os.platform() !== 'win32' || release.length < 3 || release[0] < 10 || (release[0] === 10 && release[1] === 0 && release[2] < 17763)) {
+		vscode.window.showWarningMessage(`Dark mode: This extension can only monitor Dark Mode on Windows 10 (after October 2018 update).`);
+	} else if (!spawnProcess(context)) {
 		vscode.window.showErrorMessage(`Dark mode: Error spawning monitoring process`);
 	}
 }
