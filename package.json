@@ -27,6 +27,7 @@
 		"*",
 		"onCommand:auto-dark-mode-windows.toggle"
 	],
+	"extensionKind": "ui",
 	"main": "./extension.js",
 	"contributes": {
 		"commands": [
