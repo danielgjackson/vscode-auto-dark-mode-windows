@@ -157,7 +157,7 @@ int wmain(int argc, wchar_t *argv[], wchar_t *envp[])
 		WPARAM wParam = 0;
 		LPARAM lParam = 0;
 		UINT fuFlags = SMTO_NORMAL;
-		UINT uTimeout = 5 * 1000;
+		UINT uTimeout = 15 * 1000;
 		DWORD dwResult = 0;
 		LRESULT ret = SendMessageTimeout(hWnd, msg, wParam, lParam, fuFlags, uTimeout, &dwResult);
 		return (int)ret;
