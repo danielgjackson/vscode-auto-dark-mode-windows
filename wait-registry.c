@@ -138,7 +138,6 @@ DWORD WaitForRegistryChangeDword(const wchar_t *key, const wchar_t *value, const
 	return dwData;
 }
 
-
 int wmain(int argc, wchar_t *argv[], wchar_t *envp[])
 {
 	const wchar_t *key = NULL;
@@ -148,6 +147,22 @@ int wmain(int argc, wchar_t *argv[], wchar_t *envp[])
 	if (argc > 1) key = argv[1];
 	if (argc > 2) value = argv[2];
 	if (argc > 3) data = argv[3];
+	
+#if 1	// Quick hack to test broadcast of WM_THEMECHANGED
+	#pragma comment(lib, "user32.lib");
+	if (key[0] == '!' && key[1] == 0)
+	{
+		HWND hWnd = HWND_BROADCAST;
+		UINT msg = WM_THEMECHANGED;
+		WPARAM wParam = 0;
+		LPARAM lParam = 0;
+		UINT fuFlags = SMTO_NORMAL;
+		UINT uTimeout = 5 * 1000;
+		DWORD dwResult = 0;
+		LRESULT ret = SendMessageTimeout(hWnd, msg, wParam, lParam, fuFlags, uTimeout, &dwResult);
+		return (int)ret;
+	}
+#endif
 	
 	if (key == NULL)
 	{
