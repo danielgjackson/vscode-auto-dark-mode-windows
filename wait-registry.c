@@ -149,7 +149,7 @@ int wmain(int argc, wchar_t *argv[], wchar_t *envp[])
 	if (argc > 3) data = argv[3];
 	
 #if 1	// Quick hack to test broadcast of WM_THEMECHANGED
-	#pragma comment(lib, "user32.lib");
+	#pragma comment(lib, "user32.lib")
 	if (key[0] == '!' && key[1] == 0)
 	{
 		HWND hWnd = HWND_BROADCAST;

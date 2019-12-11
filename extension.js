@@ -21,17 +21,13 @@ function spawnProcess(context) {
 			]
 		}
 		
-		// (Preferred) Executable that efficiently waits for a change
+		// Executable that efficiently waits for a change
 		const waitRegistryCommand = context.asAbsolutePath('wait-registry.exe');
-		// (Alternative) Batch file that inefficiently polls for a change
-		const queryDarkBatch = context.asAbsolutePath('query-dark.cmd');
 		
 		if (fs.existsSync(waitRegistryCommand)) {
 			process = child_process.spawn(waitRegistryCommand, ['HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize', 'AppsUseLightTheme', '*'], options);
-		} else if (fs.existsSync(queryDarkBatch)) {
-			process = child_process.spawn('cmd.exe', ['/c', queryDarkBatch], options);
 		} else {
-			console.error(`Dark mode: External watch programs not found: ${waitRegistryCommand} / ${queryDarkBatch}`);
+			console.error(`Dark mode: External watch program not found: ${waitRegistryCommand}`);
 			return false;
 		}
 
@@ -45,7 +41,7 @@ function spawnProcess(context) {
 				if (value !== 0 || line === "0") {
 					matchDarkMode(value == 0);
 				} else {
-					console.log(`Dark mode: unexpected stdout: ${data}`);
+					console.warn(`Dark mode: unexpected stdout: ${data}`);
 				}
 			}
 		});
@@ -155,22 +151,51 @@ async function toggleTheme() {
 
 
 function activate(context) {
-	//console.log('"auto-dark-mode-windows" activated');
+	//console.info('"auto-dark-mode-windows" activated');
 	let disposable = vscode.commands.registerCommand('auto-dark-mode-windows.toggle', toggleTheme);
 	context.subscriptions.push(disposable);
 
 	context.subscriptions.push({ dispose: killProcess() });
 
-	const release = os.release().split('.').map(x => parseInt(x));
-	if (os.platform() !== 'win32' || release.length < 3 || release[0] < 10 || (release[0] === 10 && release[1] === 0 && release[2] < 17763)) {
-		vscode.window.showWarningMessage(`Dark mode: This extension can only monitor Dark Mode on Windows 10 (after October 2018 update).`);
-	} else if (!spawnProcess(context)) {
-		vscode.window.showErrorMessage(`Dark mode: Error spawning monitoring process`);
+	let useBuiltIn = false;
+	// Placeholder code for future built-in, cross-platform, method of detecting system dark mode changes
+	/*
+	// POSSIBILITY 1: 'nativeTheme' module has the property: nativeTheme.shouldUseDarkColors / nativeTheme.themeSource
+	// POSSIBILITY 2: const { systemPreferences } = require('electron'); systemPreferences.isDarkMode();
+	// POSSIBILITY 3: If extensions could get a real 'window' object, could use matchMedia()
+	const windowObject = vscode.window; // This is not a real 'window' object
+	if (windowObject && windowObject.matchMedia) {
+		const matchMediaDark = windowObject.matchMedia('(prefers-color-scheme: dark)');
+		if (matchMediaDark.media !== 'not all') {
+			const listener = (isDark) => {
+				//vscode.window.showInformationMessage('BUILT-IN: state =', isDark.matches);
+				matchDarkMode(isDark.matches);
+			}
+			useBuiltIn = true;
+			//vscode.window.showInformationMessage('BUILT-IN: addListener');
+			matchMediaDark.addListener(listener);
+			context.subscriptions.push({ dispose: async () => {
+				//vscode.window.showInformationMessage('BUILT-IN: removeListener');
+				matchMediaDark.removeListener(listener);
+			}});
+			listener(matchDarkMode);
+		}
+	}
+	//vscode.window.showErrorMessage(`BUILT-IN: Using=${useBuiltIn}`);
+	*/
+
+	if (!useBuiltIn) {
+		const release = os.release().split('.').map(x => parseInt(x));
+		if (os.platform() !== 'win32' || release.length < 3 || release[0] < 10 || (release[0] === 10 && release[1] === 0 && release[2] < 17763)) {
+			vscode.window.showWarningMessage(`Dark mode: This extension can only monitor Dark Mode on Windows 10 (after October 2018 update).`);
+		} else if (!spawnProcess(context)) {
+			vscode.window.showErrorMessage(`Dark mode: Error spawning monitoring process`);
+		}
 	}
 }
 
 async function deactivate() {
-	//console.log('"auto-dark-mode-windows" deactivating');
+	//console.info('"auto-dark-mode-windows" deactivating');
 	await killProcess();
 }
 
