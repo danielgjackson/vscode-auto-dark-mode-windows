@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.0.4
+
+- Change "extensionKind" to newer array `["ui"]`, rather than old string `"ui"`, with the new meaning that the extension must run locally.  Fixes issue when the only window open is in a remote session.
+
 ## 1.0.3
 
 - Robustly handles multiple/rapid dark mode switches.
