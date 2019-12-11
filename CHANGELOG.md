@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.0.6
+
+- Published release.
+
 ## 1.0.5
 
 - Change "extensionKind" to newer array `["ui"]`, rather than old string `"ui"`, with the new meaning that the extension must run locally.  Fixes issue when the only window open is in a remote session.
