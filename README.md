@@ -1,3 +1,5 @@
+> **⚠️ NOTE: VS Code V1.42 (January 2020) now includes a preference `window.autoDetectColorScheme` which should be used instead of this extension!**
+
 # Automatic Theme Switcher for Windows Dark Mode - VS Code Extension
 
 ## Features
