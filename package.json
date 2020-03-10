@@ -1,6 +1,6 @@
 {
 	"name": "auto-dark-mode-windows",
-	"displayName": "Light/Dark Theme Switcher",
+	"displayName": "Toggle Light/Dark Theme",
 	"description": "Command to toggle theme between light/dark.",
 	"repository": {
 		"type": "git",
@@ -10,11 +10,12 @@
 	"version": "1.0.7",
 	"license": "MIT",
 	"engines": {
-		"vscode": "^1.40.0"
+		"vscode": "^1.42.0"
 	},
 	"icon": "icon.png",
 	"keywords": [
 		"switch",
+		"toggle",
 		"dark",
 		"light",
 		"theme",
@@ -46,7 +47,7 @@
 			}
 		],
 		"configuration": {
-			"title": "Toggle Dark/Light Theme"
+			"title": "Toggle Light/Dark Theme"
 		}
 	},
 	"scripts": {

@@ -4,6 +4,8 @@ const path = require('path');
 const fs = require('fs');
 const child_process = require('child_process');
 
+const title = 'Toggle Light/Dark Theme';
+
 let terminating = false;
 let process = null;
 let outBuffer = "";
@@ -27,7 +29,7 @@ function spawnProcess(context) {
 		if (fs.existsSync(waitRegistryCommand)) {
 			process = child_process.spawn(waitRegistryCommand, ['HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize', 'AppsUseLightTheme', '*'], options);
 		} else {
-			console.error(`Dark mode: External watch program not found: ${waitRegistryCommand}`);
+			console.error(`${title}: External watch program not found: ${waitRegistryCommand}`);
 			return false;
 		}
 
@@ -41,17 +43,17 @@ function spawnProcess(context) {
 				if (value !== 0 || line === "0") {
 					matchDarkMode(value == 0);
 				} else {
-					console.warn(`Dark mode: unexpected stdout: ${data}`);
+					console.warn(`${title}: unexpected stdout: ${data}`);
 				}
 			}
 		});
 		process.stderr.on('data', (data) => {
-			console.error(`Dark mode: stderr: ${data}`);
+			console.error(`${title}: stderr: ${data}`);
 		});
 		process.on('close', (code) => {
 			if (!terminating) {
-				console.error(`Dark mode: unexpected exit: ${code}`);
-				vscode.window.showErrorMessage(`Dark mode: unexpected process exit: ${code}`);
+				console.error(`${title}: unexpected exit: ${code}`);
+				vscode.window.showErrorMessage(`${title}: unexpected process exit: ${code}`);
 			}
 		});
 		return true;
@@ -72,7 +74,7 @@ async function killProcess() {
 function getTheme(light) {
 	// Get the new, standard preferred theme setting
 	const workbenchConfiguration = vscode.workspace.getConfiguration('workbench');
-	let theme = workbenchConfiguration.get(light ? preferredLightColorTheme : preferredDarkColorTheme);
+	let theme = workbenchConfiguration.get(light ? 'preferredLightColorTheme' : 'preferredDarkColorTheme');
 	if (!theme) {
 		// Get the old extension-specific configuration
 		const themeConfiguration = vscode.workspace.getConfiguration('autoDarkMode');
@@ -136,13 +138,13 @@ async function setTheme(isDark, delay, complete) {
 async function matchDarkMode(dark) {
 	try {
 		function switched(isDark) {
-			vscode.window.setStatusBarMessage(`Switched theme to ${isDark ? 'dark' : 'light'} to match Windows. 'Toggle Theme' command to switch back.`);
+			statusMessage(`${isDark ? 'Dark' : 'Light'}`);
 		}
 		
 		const result = await setTheme(dark, true, switched);
 
 		if (result === undefined) {	// another process is switching
-			vscode.window.setStatusBarMessage(`Switching theme to ${dark ? 'dark' : 'light'} to match Windows. 'Toggle Theme' command to switch back.`);
+			statusMessage(`${dark ? 'Dark' : 'Light'}`);
 		}
 	} catch(e) {
 		console.error(e);
@@ -154,7 +156,7 @@ async function toggleTheme() {
 	try {
 		const dark = !isDarkTheme();
 		function toggled(isDark) {
-			vscode.window.setStatusBarMessage(`Toggled theme to ${isDark ? 'dark' : 'light'}.`);
+			statusMessage(`${isDark ? 'Dark' : 'Light'}`);
 		}
 		await setTheme(dark, false, toggled);
 	} catch(e) {
@@ -163,20 +165,35 @@ async function toggleTheme() {
 	}
 }
 
+let statusBarItem = null;
 
 function activate(context) {
-	//console.info('"auto-dark-mode-windows" activated');
-	let disposable = vscode.commands.registerCommand('auto-dark-mode-windows.toggle', toggleTheme);
+	//console.info(`${title}: activated`);
+
+	const commandId = 'auto-dark-mode-windows.toggle';
+
+	let disposable = vscode.commands.registerCommand(commandId, toggleTheme);
 	context.subscriptions.push(disposable);
+
+	// create a new status bar item that we can now manage
+	statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+	statusBarItem.command = commandId;
+	context.subscriptions.push(statusBarItem);
 
 	context.subscriptions.push({ dispose: killProcess() });
 
 	let useBuiltIn = false;
+	const autoDetectColorScheme = vscode.workspace.getConfiguration('window').get('autoDetectColorScheme');
+	if (autoDetectColorScheme) {
+		useBuiltIn = true;
+		//context.subscriptions.push(vscode.window.onDidChangeTheme(updateStatusBarItem));
+		//vscode.window.showInformationMessage(`${title}: Using built-in theme switching.`);
+	}
 	// Placeholder code for possible cross-platform, method of detecting system dark mode changes
 	/*
-	// POSSIBILITY 1: 'nativeTheme' module has the property: nativeTheme.shouldUseDarkColors / nativeTheme.themeSource
-	// POSSIBILITY 2: const { systemPreferences } = require('electron'); systemPreferences.isDarkMode();
-	// POSSIBILITY 3: If extensions could get a real 'window' object, could use matchMedia()
+	// OLD POSSIBILITY 1: 'nativeTheme' module has the property: nativeTheme.shouldUseDarkColors / nativeTheme.themeSource
+	// OLD POSSIBILITY 2: const { systemPreferences } = require('electron'); systemPreferences.isDarkMode();
+	// OLD POSSIBILITY 3: If extensions could get a real 'window' object, could use matchMedia()
 	const windowObject = vscode.window; // This is not a real 'window' object
 	if (windowObject && windowObject.matchMedia) {
 		const matchMediaDark = windowObject.matchMedia('(prefers-color-scheme: dark)');
@@ -199,17 +216,64 @@ function activate(context) {
 	*/
 
 	if (!useBuiltIn) {
+		const preference = 'window.autoDetectColorScheme';
+		vscode.window.showInformationMessage(
+			`VS Code can now match the system dark mode itself -- please set the setting: '${preference}'.  This extension may still be used as a shortcut to manually toggle the theme (default: Cmd/Ctrl+Alt+Shift+T)`,
+			'Settings...'
+		).then((item) => {
+			if (!item) return;
+			vscode.commands.executeCommand('workbench.action.openSettings', preference);
+		});
+
 		const release = os.release().split('.').map(x => parseInt(x));
 		if (os.platform() !== 'win32' || release.length < 3 || release[0] < 10 || (release[0] === 10 && release[1] === 0 && release[2] < 17763)) {
-			vscode.window.showWarningMessage(`Dark mode: This extension can only monitor Dark Mode on Windows 10 (after October 2018 update).`);
+			vscode.window.showWarningMessage(`${title}: This extension can only monitor Dark Mode on Windows 10 (after October 2018 update).`);
 		} else if (!spawnProcess(context)) {
-			vscode.window.showErrorMessage(`Dark mode: Error spawning monitoring process`);
+			vscode.window.showErrorMessage(`${title}: Error spawning monitoring process`);
 		}
 	}
+
+	updateStatusBarItem();
+}
+
+let currentStatusMessage = null;
+let currentStatusTimeout = null;
+
+function updateStatusBarItem() {
+	if (!statusBarItem) return;
+	// https://code.visualstudio.com/api/references/icons-in-labels
+	// $(color-mode) $(activate-breakpoints) $(symbol-null) $(light-bulb) $(circle-filled)/$(circle-outline) $(star-full)/$(star-empty) $(eye)/$(eye-closed)
+	let text = `$(color-mode)`;
+	if (currentStatusMessage) {
+		text = text + ' ' + currentStatusMessage;
+	}
+	statusBarItem.text = text;
+	statusBarItem.tooltip = `Toggle dark/light theme.`;
+	statusBarItem.show();
+}
+
+function statusMessage(message) {
+	const timeout = 2000;
+	if (currentStatusTimeout) {
+		clearTimeout(currentStatusTimeout);
+		currentStatusTimeout = null;
+	}
+	if (!statusBarItem) {
+		if (!message) {
+			vscode.window.setStatusBarMessage(message, timeout);
+		}
+		return;
+	}
+	currentStatusMessage = message;
+	updateStatusBarItem();
+	currentStatusTimeout = setTimeout(() => {
+		statusMessage(null);
+	}, timeout);
 }
 
 async function deactivate() {
-	//console.info('"auto-dark-mode-windows" deactivating');
+	//console.info(`${title}: deactivating`);
+	statusBarItem = null;
 	await killProcess();
 }
 

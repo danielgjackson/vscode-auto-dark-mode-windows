@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.0.7
+
+- As VS Code now includes a built-in option to match OS theme, refocussed extension on toggling the theme.  Added prompt to change built-in setting.  Added small status-bar icon for theme toggle.
+
 ## 1.0.6
 
 - Published release.
