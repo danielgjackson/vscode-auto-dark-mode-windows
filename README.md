@@ -19,6 +19,16 @@ This following settings are used to customize the light/dark themes:
 * `autoDarkMode.darkTheme` (default: *Default Dark+*)
 * `autoDarkMode.lightTheme` (default: *Default Light+*)
 
+<!--
+
+New standard preferences:
+
+* "workbench.preferredDarkColorTheme": "Default Dark+"
+* "workbench.preferredLightColorTheme": "Default Light+"
+
+-->
+
+
 ## Known Issues
 
 None
@@ -32,3 +42,4 @@ See: [Change Log](CHANGELOG.md)
 * [GitHub Page: danielgjackson/vscode-auto-dark-mode-windows](https://github.com/danielgjackson/vscode-auto-dark-mode-windows)
 * [Visual Studio Marketplace: Automatic Theme Switcher for Windows Dark Mode](https://marketplace.visualstudio.com/items?itemName=danielgjackson.auto-dark-mode-windows
 )
+

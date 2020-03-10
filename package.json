@@ -1,24 +1,24 @@
 {
 	"name": "auto-dark-mode-windows",
-	"displayName": "Automatic Theme Switcher for Windows Dark Mode",
-	"description": "Toggle theme to dark/light automatically to match Windows 10 dark mode.",
+	"displayName": "Light/Dark Theme Switcher",
+	"description": "Command to toggle theme between light/dark.",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/danielgjackson/vscode-auto-dark-mode-windows.git"
 	},
 	"publisher": "danielgjackson",
-	"version": "1.0.6",
+	"version": "1.0.7",
 	"license": "MIT",
 	"engines": {
 		"vscode": "^1.40.0"
 	},
 	"icon": "icon.png",
 	"keywords": [
-		"dark mode",
-		"theme",
-		"automatic",
 		"switch",
-		"Windows 10"
+		"dark",
+		"light",
+		"theme",
+		"dark mode"
 	],
 	"categories": [
 		"Other"
@@ -46,19 +46,7 @@
 			}
 		],
 		"configuration": {
-			"title": "Auto Dark Mode (Windows)",
-			"properties": {
-				"autoDarkMode.darkTheme": {
-					"type": "string",
-					"default": "Default Dark+",
-					"description": "Specifies which theme is to be shown when dark mode is on."
-				},
-				"autoDarkMode.lightTheme": {
-					"type": "string",
-					"default": "Default Light+",
-					"description": "Specifies which theme is to be shown when dark mode is off."
-				}
-			}
+			"title": "Toggle Dark/Light Theme"
 		}
 	},
 	"scripts": {

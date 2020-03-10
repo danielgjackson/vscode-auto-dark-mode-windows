@@ -69,10 +69,25 @@ async function killProcess() {
 	}
 }
 
+function getTheme(light) {
+	// Get the new, standard preferred theme setting
+	const workbenchConfiguration = vscode.workspace.getConfiguration('workbench');
+	let theme = workbenchConfiguration.get(light ? preferredLightColorTheme : preferredDarkColorTheme);
+	if (!theme) {
+		// Get the old extension-specific configuration
+		const themeConfiguration = vscode.workspace.getConfiguration('autoDarkMode');
+		theme = themeConfiguration.get(light ? 'lightTheme' : 'darkTheme');
+	}
+	if (!theme) {
+		// Give up and return current theme
+		theme = workbenchConfiguration.get('colorTheme');
+	}
+	return theme;
+}
+
 function isDarkTheme() {
 	const currentTheme = vscode.workspace.getConfiguration('workbench').get('colorTheme');
-	const darkTheme = vscode.workspace.getConfiguration('autoDarkMode').get(`darkTheme`);
-	return currentTheme === darkTheme;
+	return currentTheme === getTheme(false);
 }
 
 async function setTheme(isDark, delay, complete) {
@@ -93,8 +108,7 @@ async function setTheme(isDark, delay, complete) {
 		for (;;) {
 			const action = pendingAction;
 			const currentTheme = vscode.workspace.getConfiguration('workbench').get('colorTheme');
-			const themeConfiguration = vscode.workspace.getConfiguration('autoDarkMode');
-			let newTheme = themeConfiguration.get(action.isDark ? 'darkTheme' : 'lightTheme');
+			let newTheme = getTheme(!action.isDark);
 			if (newTheme !== currentTheme) {
 				vscode.workspace.getConfiguration('workbench').update('colorTheme', newTheme, vscode.ConfigurationTarget.Global);
 				if (action.complete) { action.complete(action.isDark); }
@@ -158,7 +172,7 @@ function activate(context) {
 	context.subscriptions.push({ dispose: killProcess() });
 
 	let useBuiltIn = false;
-	// Placeholder code for future built-in, cross-platform, method of detecting system dark mode changes
+	// Placeholder code for possible cross-platform, method of detecting system dark mode changes
 	/*
 	// POSSIBILITY 1: 'nativeTheme' module has the property: nativeTheme.shouldUseDarkColors / nativeTheme.themeSource
 	// POSSIBILITY 2: const { systemPreferences } = require('electron'); systemPreferences.isDarkMode();
