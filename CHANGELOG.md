@@ -1,6 +1,6 @@
 # Change Log
 
-## 1.0.8
+## 1.0.9
 
 - Removed warning when not using `autoDetectColorScheme`.  Removed the original functionality on Windows to track the system light/dark setting (must now use the built-in method instead).
 
