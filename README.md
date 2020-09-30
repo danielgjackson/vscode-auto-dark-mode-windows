@@ -1,5 +1,12 @@
 # Toggle Light/Dark Theme - VS Code Extension
 
+<!--
+![Visual Studio Marketplace Version](https://vsmarketplacebadge.apphb.com/version-short/danielgjackson.auto-dark-mode-windows.svg)
+![Visual Studio Marketplace Rating](https://vsmarketplacebadge.apphb.com/rating-short/danielgjackson.auto-dark-mode-windows.svg)
+![Visual Studio Marketplace Installs](https://vsmarketplacebadge.apphb.com/installs/danielgjackson.auto-dark-mode-windows.svg)
+![Visual Studio Marketplace Downloads](https://vsmarketplacebadge.apphb.com/downloads/danielgjackson.auto-dark-mode-windows.svg)
+-->
+
 <!-- ![Automatic Switching](icon.png) -->
 
 ## Features
@@ -12,12 +19,12 @@ This standard settings are used to customize the light/dark themes:
 * `workbench.preferredDarkColorTheme` (default: *Default Dark+*)
 * `workbench.preferredLightColorTheme` (default: *Default Light+*)
 
+NOTE: If you would like to track the operating system's light/dark mode, use the VS Code setting `window.autoDetectColorScheme`.
+
 
 ## History
 
-This add-on was previously *Automatic Theme Switcher for Windows Dark Mode*, which automatically switched between dark/light themes to match Windows Dark Mode (which required *Windows 10 October 2018 Update* or later), and used the settings `autoDarkMode.darkTheme` and `autoDarkMode.lightTheme`.  The extension was partly inspired by a version for *macOS Mojave*: [auto-dark-mode](https://marketplace.visualstudio.com/items?itemName=LinusU.auto-dark-mode&ssr=false).
-
-However, since VS Code V1.42 (January 2020), a standard setting has been available: `window.autoDetectColorScheme`.  This performs the same action in a cross-platform way and should be used instead.  If this setting is not enabled during start-up, the extension will prompt to change the setting, but the original behaviour will continue. 
+This extension was previously *Automatic Theme Switcher for Windows Dark Mode*, which automatically switched between dark/light themes to match Windows Dark Mode (and required *Windows 10 October 2018 Update* or later), and used the settings `autoDarkMode.darkTheme` and `autoDarkMode.lightTheme`.  The extension was partly inspired by a version for *macOS Mojave*: [auto-dark-mode](https://marketplace.visualstudio.com/items?itemName=LinusU.auto-dark-mode&ssr=false).  However, since VS Code V1.42 (January 2020), a standard setting has been available: `window.autoDetectColorScheme` which performs that action in a cross-platform way.
 
 
 ## Requirements

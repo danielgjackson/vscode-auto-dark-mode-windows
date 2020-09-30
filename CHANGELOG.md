@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.0.8
+
+- Removed warning when not using `autoDetectColorScheme`.  Removed the original functionality on Windows to track the system light/dark setting (must now use the built-in method instead).
+
 ## 1.0.7
 
 - As VS Code now includes a built-in option to match OS theme, refocussed extension on toggling the theme.  Added prompt to change built-in setting.  Added small status-bar icon for theme toggle.

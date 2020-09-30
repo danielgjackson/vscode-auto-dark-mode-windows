@@ -25,7 +25,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"*",
+		"onStartupFinished",
 		"onCommand:auto-dark-mode-windows.toggle"
 	],
 	"extensionKind": [
@@ -52,8 +52,7 @@
 	},
 	"scripts": {
 		"postinstall": "node ./node_modules/vscode/bin/install",
-		"test": "node ./node_modules/vscode/bin/test",
-		"vscode:prepublish": "build.cmd"
+		"test": "node ./node_modules/vscode/bin/test"
 	},
 	"devDependencies": {
 		"typescript": "^3.3.1",
