@@ -7,24 +7,16 @@
 ![Visual Studio Marketplace Downloads](https://vsmarketplacebadge.apphb.com/downloads/danielgjackson.auto-dark-mode-windows.svg)
 -->
 
-<!-- ![Automatic Switching](icon.png) -->
+This extension provides a quick toggle between light/dark themes in VS Code.  This may be useful for anyone working under significantly changing background or reflected light levels. 
+
+![Toggle light/dark theme with a status bar icon](screenshot.png)
+
 
 ## Features
 
-* Command *Toggle Theme* (`auto-dark-mode-windows.toggle`) with default hot-key `Ctrl`+`Alt`+`Shift`+`T`, to toggle between light/dark theme.
-* A small status bar icon to perform the theme switch.
-
-This standard settings are used to customize the light/dark themes:
-
-* `workbench.preferredDarkColorTheme` (default: *Default Dark+*)
-* `workbench.preferredLightColorTheme` (default: *Default Light+*)
-
-NOTE: If you would like to track the operating system's light/dark mode, use the VS Code setting `window.autoDetectColorScheme`.
-
-
-## History
-
-This extension was previously *Automatic Theme Switcher for Windows Dark Mode*, which automatically switched between dark/light themes to match Windows Dark Mode (and required *Windows 10 October 2018 Update* or later), and used the settings `autoDarkMode.darkTheme` and `autoDarkMode.lightTheme`.  The extension was partly inspired by a version for *macOS Mojave*: [auto-dark-mode](https://marketplace.visualstudio.com/items?itemName=LinusU.auto-dark-mode&ssr=false).  However, since VS Code V1.42 (January 2020), a standard setting has been available: `window.autoDetectColorScheme` which performs that action in a cross-platform way.
+* *Toggle Theme* command: `auto-dark-mode-windows.toggle` (see [History](#history) for name choice!)
+* Status bar icon to quickly perform the theme switch: <code>&#x1F313;&#xFE0E;</code>
+* Default hot-key: `Ctrl`+`Alt`+`Shift`+`T`
 
 
 ## Requirements
@@ -34,7 +26,18 @@ None.
 
 ## Extension Settings
 
-None.
+No additional settings are provided.  
+
+* The standard settings are used to customize the light/dark themes:
+
+    * `workbench.preferredDarkColorTheme`
+    * `workbench.preferredLightColorTheme`
+
+* The operating system's light/dark mode can be automatically tracked by enabling the standard setting (the *Toggle Theme* command will temporarily override the theme):
+
+    * `window.autoDetectColorScheme`
+
+* The status bar icon (<code>&#x1F313;&#xFE0E;</code>) can be hidden/shown by right-clicking the status bar and selecting *Toggle Light/Dark Theme (Extension)*.
 
 
 ## Known Issues
@@ -45,6 +48,11 @@ None.
 ## Release Notes
 
 See: [Change Log](CHANGELOG.md)
+
+
+## History
+
+This extension was previously titled *Automatic Theme Switcher for Windows Dark Mode*, which automatically switched between dark/light themes to match the Windows Dark Mode (on *Windows 10 October 2018 Update* or later), and used the settings `autoDarkMode.darkTheme` and `autoDarkMode.lightTheme`.  The extension was partly inspired by a version for *macOS Mojave*: [auto-dark-mode](https://marketplace.visualstudio.com/items?itemName=LinusU.auto-dark-mode&ssr=false).  However, since VS Code V1.42 (January 2020), a standard setting has been available (`window.autoDetectColorScheme`) to perform this functionality as a built-in, cross-platform feature.  Since then, the extension remains useful as a quick toggle between the standard light/dark theme preferences.
 
 
 ## Links

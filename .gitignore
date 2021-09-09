@@ -1,4 +1,7 @@
 node_modules
 /*.obj
 /*.vsix
+dist/
+.vscode-test/
+.vscode-test-web/
 /wait-registry.exe

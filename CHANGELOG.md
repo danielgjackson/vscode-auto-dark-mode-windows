@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.0.10
+
+- Configured to additionally package as a [Web Extension](https://code.visualstudio.com/api/extension-guides/web-extensions) so that the extension will work when VS Code is running in a browser (e.g. [github.dev](https://github.dev)).
+
 ## 1.0.9
 
 - Removed warning when not using `autoDetectColorScheme`.  Removed the original functionality on Windows to track the system light/dark setting (must now use the built-in method instead).

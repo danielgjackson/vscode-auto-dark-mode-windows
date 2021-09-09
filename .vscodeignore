@@ -1,6 +1,9 @@
 .vscode/**
 .vscode-test/**
+.vscode-test-web/**
 test/**
+dist/web/test/**
+build/**
 .gitignore
 **/jsconfig.json
 **/*.map

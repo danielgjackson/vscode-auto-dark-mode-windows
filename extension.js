@@ -1,5 +1,5 @@
 // VS Code Extension - Toggle Light/Dark Theme
-// Dan Jackson, 2019-2020
+// Dan Jackson, 2019-2021
 
 const vscode = require('vscode');
 
@@ -7,7 +7,7 @@ let statusBarItem = null;
 let currentStatusMessage = null;
 let currentStatusTimeout = null;
 
-function getThemeForDark(dark) {
+function getTheme(dark) {
 	const workbenchConfiguration = vscode.workspace.getConfiguration('workbench');
 	const theme = workbenchConfiguration.get(dark ? 'preferredDarkColorTheme' : 'preferredLightColorTheme');
 	return theme;
@@ -16,9 +16,9 @@ function getThemeForDark(dark) {
 function toggleTheme() {
 	try {
 		const currentTheme = vscode.workspace.getConfiguration('workbench').get('colorTheme');
-		const isDark = currentTheme === getThemeForDark(true);
+		const isDark = currentTheme === getTheme(true);
 		const setDark = !isDark;
-		const newTheme = getThemeForDark(setDark);
+		const newTheme = getTheme(setDark);
 		if (newTheme && newTheme !== currentTheme) {
 			vscode.workspace.getConfiguration('workbench').update('colorTheme', newTheme, vscode.ConfigurationTarget.Global);
 			statusMessage(`${setDark ? 'Dark' : 'Light'}`);
@@ -40,7 +40,7 @@ function activate(context) {
 }
 
 function updateStatusBarItem() {
-	if (!statusBarItem) return;
+	if (!statusBarItem) { return; }
 	let text = `$(color-mode)`;
 	if (currentStatusMessage) {
 		text = text + ' ' + currentStatusMessage;
@@ -69,11 +69,13 @@ function statusMessage(message) {
 	}
 	currentStatusMessage = message;
 	updateStatusBarItem();
-	currentStatusTimeout = setTimeout(() => {
-		statusMessage(null);
-	}, timeout);
+	if (message !== null) {
+		currentStatusTimeout = setTimeout(() => {
+			statusMessage(null);
+		}, timeout);
+	}
 }
 
 module.exports = {
 	activate
-}
+};

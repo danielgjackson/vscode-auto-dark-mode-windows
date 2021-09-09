@@ -1,16 +1,16 @@
 {
 	"name": "auto-dark-mode-windows",
 	"displayName": "Toggle Light/Dark Theme",
-	"description": "Command to toggle theme between light/dark.",
+	"description": "Command to toggle the theme between light/dark.",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/danielgjackson/vscode-auto-dark-mode-windows.git"
 	},
 	"publisher": "danielgjackson",
-	"version": "1.0.9",
+	"version": "1.0.10",
 	"license": "MIT",
 	"engines": {
-		"vscode": "^1.42.0"
+		"vscode": "^1.60.0"
 	},
 	"icon": "icon.png",
 	"keywords": [
@@ -28,6 +28,7 @@
 		"onStartupFinished",
 		"onCommand:auto-dark-mode-windows.toggle"
 	],
+	"browser": "./dist/web/extension.js",
 	"extensionKind": [
 		"ui"
 	],
@@ -51,14 +52,35 @@
 		}
 	},
 	"scripts": {
-		"postinstall": "node ./node_modules/vscode/bin/install",
-		"test": "node ./node_modules/vscode/bin/test"
+		"_disabled-postinstall": "node ./node_modules/vscode/bin/install",
+		"pretest": "npm run lint",
+		"test": "node ./test/runTest.js",
+		"test-web": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. --extensionTestsPath=dist/web/test/suite/index.js --trace-warnings",
+		"pretest-web": "npm run compile-web",
+		"vscode:prepublish": "npm run package-web",
+		"compile-web": "webpack --config ./build/web-extension.webpack.config.js",
+		"watch-web": "webpack --watch --config ./build/web-extension.webpack.config.js",
+		"package-web": "webpack --mode production --devtool hidden-source-map --config ./build/web-extension.webpack.config.js",
+		"lint": "eslint ."
 	},
 	"devDependencies": {
-		"typescript": "^3.3.1",
-		"vscode": "^1.1.28",
-		"eslint": "^5.13.0",
-		"@types/node": "^10.12.21",
-		"@types/mocha": "^2.2.42"
+		"@types/vscode": "^1.60.0",
+		"@types/glob": "^7.1.3",
+		"@types/mocha": "^8.2.2",
+		"@types/node": "14.x",
+		"eslint": "^7.27.0",
+		"@typescript-eslint/eslint-plugin": "^4.26.0",
+		"@typescript-eslint/parser": "^4.26.0",
+		"glob": "^7.1.7",
+		"mocha": "^8.4.0",
+		"typescript": "^4.3.2",
+		"vscode-test": "^1.5.2",
+		"@vscode/test-web": "^0.0.8",
+		"ts-loader": "^9.2.2",
+		"webpack": "^5.38.1",
+		"webpack-cli": "^4.7.0",
+		"@types/webpack-env": "^1.16.0",
+		"assert": "^2.0.0",
+		"process": "^0.11.10"
 	}
 }
