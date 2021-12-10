@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.0.11
+
+- Now works in Restricted Mode in an untrusted workspace.
+
 ## 1.0.10
 
 - Configured to additionally package as a [Web Extension](https://code.visualstudio.com/api/extension-guides/web-extensions) so that the extension will work when VS Code is running in a browser (e.g. [github.dev](https://github.dev)).

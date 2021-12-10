@@ -9,7 +9,7 @@
 
 This extension provides a quick toggle between light/dark themes in VS Code.  This may be useful for anyone working under significantly changing background or reflected light levels. 
 
-**New:** If you would like to quickly toggle the whole system dark mode, you might be interested in: [Toggle Dark/Light Mode](https://github.com/danielgjackson/toggle-dark-light).
+> **New:** If you would like to quickly toggle the whole system dark mode, you might be interested in: [Toggle Dark/Light Mode](https://github.com/danielgjackson/toggle-dark-light).
 
 ![Toggle light/dark theme with a status bar icon](screenshot.png)
 
