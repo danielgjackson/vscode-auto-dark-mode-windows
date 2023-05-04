@@ -30,14 +30,14 @@ None.
 
 No additional settings are provided.  
 
-* The standard settings are used to customize the light/dark themes:
+* Your choice of VS Code light/dark theme are used, you can adjust these by opening VS Code's settings with the command *Preferences: Open Settings (UI)*, or through the menu: *Code* (on Mac) or *File* (on Windows/Linux) / *Preferences* / *Settings*, then:
 
-    * `workbench.preferredDarkColorTheme`
-    * `workbench.preferredLightColorTheme`
+    * *Workbench* / *Appearance* / *Preferred Light Color Theme* (`workbench.preferredLightColorTheme`)
+    * *Workbench* / *Appearance* / *Preferred Dark Color Theme* (`workbench.preferredDarkColorTheme`)
 
-* The operating system's light/dark mode can be automatically tracked by enabling the standard setting (the *Toggle Theme* command will temporarily override the theme):
+* The operating system's light/dark mode can be automatically tracked by enabling the following VS Code setting: (in which case, the *Toggle Theme* command will temporarily override the system theme):
 
-    * `window.autoDetectColorScheme`
+    * *Window* / *Auto Detect Color Scheme* (`window.autoDetectColorScheme`)
 
 * The status bar icon (<code>&#x1F313;&#xFE0E;</code>) can be hidden/shown by right-clicking the status bar and selecting *Toggle Light/Dark Theme (Extension)*.
 
