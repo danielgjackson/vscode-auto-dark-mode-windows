@@ -82,7 +82,7 @@
 		"vscode-test": "^1.5.2",
 		"@vscode/test-web": "^0.0.8",
 		"ts-loader": "^9.2.2",
-		"webpack": "^5.38.1",
+		"webpack": "^5.76.0",
 		"webpack-cli": "^4.7.0",
 		"@types/webpack-env": "^1.16.0",
 		"assert": "^2.0.0",
