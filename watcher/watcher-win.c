@@ -1,14 +1,20 @@
-// Output 1 for light theme, 0 for dark theme -- initial value, and any changes.
+// Windows implementation of the watcher() function.
 
-// cl.exe watcher-win.c /link /out:watcher-win.exe
+// cl.exe watcher.c watcher-win.c /link /out:watcher-win.exe
 // watcher-win.exe
+
+#ifndef _WIN32
+	#error "watcher-win.c is only expected to be compiled on Windows"
+#endif
 
 #include <windows.h>
 #include <stdio.h>
 
+#include "watcher.h"
+
 #pragma comment(lib, "advapi32")
 
-int wmain(int argc, wchar_t *argv[], wchar_t *envp[])
+int watcher(watcher_callback callback, void *reference)
 {
 	HKEY hMainKey = HKEY_CURRENT_USER;
 	const wchar_t *key = L"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
@@ -53,8 +59,12 @@ int wmain(int argc, wchar_t *argv[], wchar_t *envp[])
 		// Return initial and changed values
 		if (dwData != previous)
 		{
-			fwprintf(stdout, L"%u\n", dwData);
-			fflush(stdout);
+			if (callback) {
+				callback((int)dwData, reference);
+			} else {
+				fwprintf(stdout, L"%u\n", dwData);
+				fflush(stdout);
+			}
 			previous = dwData;
 		}
 

@@ -1,15 +1,29 @@
-// clang -framework Foundation watcher-mac.m -o watcher-mac
+// Mac implementation of the watcher() function.
+
+// clang -framework Foundation watcher.c watcher-mac.m -o watcher-mac
+// ./watcher-mac
+
+#include <TargetConditionals.h>
+#if !TARGET_OS_OSX
+    #error "watcher-mac.m is only expected to be compiled on macOS"
+#endif
 
 #import <Foundation/Foundation.h>
 
+#include "watcher.h"
+
 @interface Watcher : NSObject
+@property (nonatomic, assign) watcher_callback callback;
+@property (nonatomic, assign) void *reference;
 @end
 
 @implementation Watcher
 
-- (instancetype)init {
+- (instancetype)initWithCallback:(watcher_callback)callback reference:(void *)reference {
     self = [super init];
     if (self) {
+        self.callback = callback;
+        self.reference = reference;
         [[NSUserDefaults standardUserDefaults] addObserver:self
                                                  forKeyPath:@"AppleInterfaceStyle"
                                                     options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew)
@@ -24,22 +38,26 @@
                        context:(void *)context {
     NSString *interfaceStyle = change[NSKeyValueChangeNewKey];
     NSString *interfaceStyleString = [NSString stringWithFormat:@"%@", interfaceStyle];
+
+    int theme = 1;
     if ([interfaceStyleString isEqualToString:@"Dark"]) {
-        printf("0\n");  // Dark
-        fflush(stdout);
+        theme = 0;
+    }
+    if (self.callback) {
+        self.callback(theme, self.reference);
     } else {
-        printf("1\n");  // Light
+        printf("%d\n", theme);
         fflush(stdout);
     }
 }
 
 @end
 
-int main(int argc, const char * argv[]) {
+// int main(int argc, const char * argv[]) {  return 0; }
+int watcher(watcher_callback callback, void *reference) {
     @autoreleasepool {
-        Watcher *watcher = [[Watcher alloc] init];
+        Watcher *watcher = [[Watcher alloc] initWithCallback:callback reference:reference];
         [[NSRunLoop mainRunLoop] run];
     }
-    return 0;
+    return -1;
 }
-

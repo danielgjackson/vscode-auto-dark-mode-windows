@@ -26,10 +26,23 @@ function spawnProcess(context) {
 		}
 		
 		// Executable that efficiently waits for a change
-		const waitRegistryCommand = context.asAbsolutePath('wait-registry.exe');
+		let watcherExecutable = null;
+		if (os.platform() === 'win32') {
+			watcherExecutable = 'watcher-win.exe';
+		} else if (os.platform() === 'darwin') {
+			watcherExecutable = 'watcher-mac';
+		} else if (os.platform() === 'linux') {
+			watcherExecutable = 'watcher-lin';
+		}
+
+		if (!watcherExecutable) {
+			console.error(`${title}: Unsupported platform for watching system scheme: ${os.platform()}`);
+			return false;
+		}
+		const waitRegistryCommand = context.asAbsolutePath(watcherExecutable);
 		
 		if (fs.existsSync(waitRegistryCommand)) {
-			process = child_process.spawn(waitRegistryCommand, ['HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize', 'AppsUseLightTheme', '*'], options);
+			process = child_process.spawn(waitRegistryCommand, [], options);
 		} else {
 			console.error(`${title}: External watch program not found: ${waitRegistryCommand}`);
 			return false;

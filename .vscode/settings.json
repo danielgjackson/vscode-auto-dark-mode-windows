@@ -5,6 +5,7 @@
         "HKEY",
         "LSTATUS",
         "swiftc",
+        "tmain",
         "wmain"
     ]
 }

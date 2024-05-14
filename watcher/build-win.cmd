@@ -22,7 +22,7 @@ ECHO Setting environment variables for C compiler... %VCVARSALL%
 CALL "%VCVARSALL%" %ARCH%
 
 :BUILD
-cl.exe watcher-win.c /link /out:watcher-win.exe
+cl.exe watcher.c watcher-win.c /link /out:watcher-win.exe
 IF ERRORLEVEL 1 GOTO ERROR
 del watcher-win.obj
 GOTO END
