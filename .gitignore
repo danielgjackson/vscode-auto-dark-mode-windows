@@ -5,3 +5,4 @@ dist/
 .vscode-test/
 .vscode-test-web/
 /wait-registry.exe
+.DS_Store

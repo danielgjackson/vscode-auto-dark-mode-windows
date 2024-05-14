@@ -1,5 +1,8 @@
 // VS Code Extension - Toggle Light/Dark Theme
-// Dan Jackson, 2019-2021
+// Dan Jackson, 2019-2024
+
+// NOTE: Built-in command for toggle:  workbench.action.toggleLightDarkThemes  (broken in 1.89 when tracking system theme)
+
 
 const vscode = require('vscode');
 
