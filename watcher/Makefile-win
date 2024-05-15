@@ -11,7 +11,8 @@ CFLAGS = -m64 -O3 -Wall -municode -DUNICODE -D_UNICODE
 LIBS = -ladvapi32
 
 #RES = $(wildcard *.rc)
-SRC = $(wildcard *.c)
+#SRC = $(wildcard *.c)
+SRC = watcher.c watcher-win.c
 INC = $(wildcard *.h)
 
 all: $(BIN_NAME)

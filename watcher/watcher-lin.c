@@ -31,8 +31,28 @@ esac
 
 #include "watcher.h"
 
+static void dbus_error(DBusError *err, const char *prefix)
+{
+    fprintf(stderr, "ERROR: DBus Error %s: %s\n", prefix ? prefix : "", err->message ? err->message : "(null)");
+    dbus_error_free(err);
+    return;
+}
+
 int watcher(watcher_callback callback, void *reference)
 {
+    DBusError err;
+    dbus_error_init(&err);
+
+    DBusConnection *session_bus = NULL;
+    session_bus = dbus_bus_get(DBUS_BUS_SESSION, &err);
+    if (dbus_error_is_set(&err))
+    {
+        dbus_error(&err, "dbus_bus_get(DBUS_BUS_SESSION)");
+        return -1;
+    }
+    printf("session_bus=%p\n", session_bus);
+
+    // !!!
     fprintf(stderr, "ERROR: Linux implementation of the watcher() function is not implemented yet.\n");
 
     //callback(0, reference);

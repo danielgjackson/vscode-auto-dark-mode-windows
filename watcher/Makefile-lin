@@ -1,0 +1,25 @@
+# sudo apt install libdbus-1-dev
+# make -f Makefile-lin
+
+BIN_NAME = watcher-lin
+CC = gcc
+CFLAGS = -O3 -Wall
+LIBS = 
+
+#SRC = $(wildcard *.c)
+SRC = watcher.c watcher-lin.c
+INC = $(wildcard *.h)
+
+CFLAGS += -I/usr/local/include -L/usr/local/lib
+
+# -I/usr/include/dbus-1.0 -I/usr/lib/x86_64-linux-gnu/dbus-1.0/include -ldbus-1
+CFLAGS += `pkg-config --cflags dbus-1`
+LIBS += `pkg-config --libs dbus-1`
+
+all: $(BIN_NAME)
+
+$(BIN_NAME): Makefile-lin $(SRC) $(INC)
+	$(CC) -std=c99 -o $(BIN_NAME) $(CFLAGS) $(SRC) $(LIBS)
+
+clean:
+	rm -f *.o $(BIN_NAME)
