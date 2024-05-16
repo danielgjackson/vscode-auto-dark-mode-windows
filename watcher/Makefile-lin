@@ -1,4 +1,4 @@
-# sudo apt install libdbus-1-dev
+# sudo apt install build-essential libdbus-1-dev
 # make -f Makefile-lin
 
 BIN_NAME = watcher-lin
