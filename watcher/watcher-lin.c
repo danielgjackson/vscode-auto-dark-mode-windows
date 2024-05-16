@@ -12,9 +12,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
-//#include <stdbool.h>
 
-#include <unistd.h> // pause()
 #include <dbus/dbus.h>
 
 #include "watcher.h"
@@ -315,7 +313,6 @@ int watcher(watcher_callback callback, void *reference)
     my_filter_data.callback = callback;
     my_filter_data.reference = reference;
     const char *match = "type='signal',interface='org.freedesktop.portal.Settings',member='SettingChanged',arg0='org.freedesktop.appearance',arg1='color-scheme'";
-
     DBusError err;
     dbus_error_init(&err);
     dbus_bus_add_match(conn, match, &err);
@@ -334,6 +331,7 @@ int watcher(watcher_callback callback, void *reference)
     // Event loop
     for (;;)
     {
+        // Wait (up to forever) for a message, dispatch any that arrive.
         if (!dbus_connection_read_write_dispatch(conn, -1))
         {
             fprintf(stderr, "ERROR: dbus_connection_read_write_dispatch()\n");
