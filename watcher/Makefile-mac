@@ -1,0 +1,18 @@
+# make -f Makefile-mac
+
+BIN_NAME = watcher-mac
+CC = clang
+CFLAGS = -O3 -Wall
+LIBS = -framework Foundation
+
+#SRC = $(wildcard *.c)
+SRC = watcher.c watcher-mac.m
+INC = $(wildcard *.h)
+
+all: $(BIN_NAME)
+
+$(BIN_NAME): Makefile-mac $(SRC) $(INC)
+	$(CC) -o $(BIN_NAME) $(CFLAGS) $(SRC) $(LIBS)
+
+clean:
+	rm -f *.o $(BIN_NAME)
