@@ -13,7 +13,7 @@
 #include <string.h>
 #include <stdint.h>
 
-#include <dbus/dbus.h>
+#include <dbus/dbus.h>  // sudo apt install libdbus-1-dev
 
 #include "watcher.h"
 
@@ -83,9 +83,18 @@ static int parse_reply(DBusMessage *msg)
     }
 
     int type = dbus_message_iter_get_arg_type(&iter);
+    // Unexpected reply -- returned for "Requested setting not found"
+    if (type == DBUS_TYPE_STRING)
+    {
+        const char *str = "";
+        dbus_message_iter_get_basic(&iter, &str);
+        fprintf(stderr, "ERROR: dbus_message_iter_get_arg_type() == DBUS_TYPE_STRING (reply) - %s\n", str);
+        return -1;
+    }
+    // Expected reply
     if (type != DBUS_TYPE_VARIANT)
     {
-        fprintf(stderr, "ERROR: dbus_message_iter_get_arg_type() != DBUS_TYPE_VARIANT\n");
+        fprintf(stderr, "ERROR: dbus_message_iter_get_arg_type() != DBUS_TYPE_VARIANT (reply)\n");
         return -1;
     }
 
@@ -292,7 +301,6 @@ int watcher(watcher_callback callback, void *reference)
     if (mydbus_request_name(conn, "dev.danjackson.vscode-auto-dark-mode-windows") == NULL) return -1;
 
     // Get the current theme value
-    // - Send a message and wait for a reply
     const char *destination = "org.freedesktop.portal.Desktop";
     const char *path = "/org/freedesktop/portal/desktop";
     const char *iface = "org.freedesktop.portal.Settings";
@@ -300,10 +308,19 @@ int watcher(watcher_callback callback, void *reference)
     const char *paramNamespace = "org.freedesktop.appearance";
     const char *paramKey = "color-scheme";
     int value = mydbus_send_message(conn, destination, path, iface, method, paramNamespace, paramKey);
+
+    // Process initial value
     int result = -1;
     //fprintf(stderr, "DEBUG: initial %d %s\n", value, value_to_string(value));
     if (value == 1) result = 0; // dark
     else if (value == 2 || value == 0) result = 1;    // light or unknown
+    else
+    {
+        fprintf(stderr, "ERROR: Cannot determine initial theme value -- perhaps unsupported?\n");
+        return -1;
+    }
+
+    // Callback with result
     if (result == 0 || result == 1) callback(result, reference);
     // else { ; }  // error
 
