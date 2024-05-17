@@ -12,7 +12,9 @@
 
 #include "watcher.h"
 
-#pragma comment(lib, "advapi32")
+#if defined(_MSC_VER)
+#pragma comment(lib, "advapi32") // RegOpenKeyEx / RegGetValue / RegNotifyChangeKeyValue / RegCloseKey
+#endif
 
 int watcher(watcher_callback callback, void *reference)
 {

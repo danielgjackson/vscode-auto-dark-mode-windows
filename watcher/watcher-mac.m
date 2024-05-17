@@ -3,6 +3,8 @@
 // clang -framework Foundation watcher.c watcher-mac.m -o watcher-mac
 // ./watcher-mac
 
+// docker run -v .:/workspace --rm -it ghcr.io/shepherdjerred/macos-cross-compiler:latest aarch64-apple-darwin22-clang --target=aarch64-apple-darwin22 -framework Foundation watcher.c watcher-mac.m -o watcher-mac
+
 #include <TargetConditionals.h>
 #if !TARGET_OS_OSX
     #error "watcher-mac.m is only expected to be compiled on macOS"

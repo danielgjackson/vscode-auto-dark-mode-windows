@@ -31,6 +31,7 @@ int _tmain(int argc, _TCHAR *argv[])
     myConfig.suffix = NULL;
     myConfig.eol = 1;
 
+    /*
     // Config from parameters
     if (argc > 1) {
         myConfig.prefix = argv[1];
@@ -49,6 +50,7 @@ int _tmain(int argc, _TCHAR *argv[])
     if (myConfig.suffix == NULL) {
         myConfig.suffix = "";
     }
+    */
 
     // Run watcher code
     int result = watcher(callback, &myConfig);

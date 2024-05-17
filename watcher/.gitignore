@@ -1,0 +1,7 @@
+.DS_Store
+*.obj
+*.o
+watcher-win.exe
+watcher-lin-x64
+watcher-lin-arm
+watcher-mac
