@@ -1,7 +1,8 @@
 # docker buildx build --output type=local,dest=./ .
 
-# Currently requires amd64, but could be made to use the cross-compiler for x64?
-FROM --platform=linux/amd64 debian:12.5-slim  AS build
+# --- Linux builds and Windows cross-compile ---
+# Currently requires amd64, but could test a cross-compiler on ARM for x64?
+FROM --platform=linux/amd64 debian:12.5-slim AS build
 
 RUN dpkg --add-architecture amd64
 RUN dpkg --add-architecture arm64
@@ -26,8 +27,10 @@ RUN apt-get install -y libdbus-1-dev:arm64
 RUN apt-get install -y gcc-mingw-w64
 
 # Source files
-WORKDIR /root/watcher
-COPY *.sh Makefile* *.c *.h *.m *.swift .
+WORKDIR /workspace
+COPY watcher.c watcher.h ./
+COPY Makefile-lin watcher-lin.c ./
+COPY Makefile-win watcher-win.c ./
 
 # Linux: amd64 & arm64 binaries required
 RUN make -f Makefile-lin CC=gcc   BIN_NAME=watcher-lin-x64
@@ -37,14 +40,29 @@ RUN make -f Makefile-lin CC=aarch64-linux-gnu-gcc BIN_NAME=watcher-lin-arm
 # Windows: x86 32-bit version should run on any Windows 10/11 x86/x64/ARM (via thunk/emulation)
 RUN make -f Makefile-win
 
-# TODO: Cross-compile for aarch64 macOS
-#       - see: https://github.com/shepherdjerred/macos-cross-compiler/pkgs/container/macos-cross-compiler
-#RUN make -f Makefile-mac
 
 
-# Extract build binaries
+# --- Mac build ---
+# See: https://github.com/shepherdjerred/macos-cross-compiler/pkgs/container/macos-cross-compiler
+#docker run -v .:/workspace --rm -it ghcr.io/shepherdjerred/macos-cross-compiler:latest aarch64-apple-darwin22-clang --target=aarch64-apple-darwin22 -framework Foundation watcher.c watcher-mac.m -o watcher-mac
+FROM --platform=linux/amd64 ghcr.io/shepherdjerred/macos-cross-compiler:latest AS build-mac
+
+RUN apt-get update
+RUN apt-get install -y make
+
+WORKDIR /workspace
+COPY watcher.c watcher.h ./
+COPY Makefile-mac watcher-mac.m ./
+#COPY watcher-mac.swift ./
+
+# Mac: aarch64
+RUN make -f Makefile-mac CC=aarch64-apple-darwin22-clang OPT=--target=aarch64-apple-darwin22
+
+
+
+# --- Extract build binaries ---
 FROM scratch AS binaries
-COPY --from=build /root/watcher/watcher-lin-x64 /
-COPY --from=build /root/watcher/watcher-lin-arm /
-COPY --from=build /root/watcher/watcher-win.exe /
-#COPY --from=build /root/watcher/watcher-mac /
+COPY --from=build /workspace/watcher-lin-x64 /
+COPY --from=build /workspace/watcher-lin-arm /
+COPY --from=build /workspace/watcher-win.exe /
+COPY --from=build-mac /workspace/watcher-mac /
