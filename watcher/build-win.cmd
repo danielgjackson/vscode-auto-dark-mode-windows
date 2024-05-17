@@ -24,7 +24,7 @@ CALL "%VCVARSALL%" %ARCH%
 :BUILD
 cl.exe watcher.c watcher-win.c /link /out:watcher-win.exe
 IF ERRORLEVEL 1 GOTO ERROR
-del watcher-win.obj
+del watcher.obj watcher-win.obj
 GOTO END
 
 :ERROR
