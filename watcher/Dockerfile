@@ -53,7 +53,6 @@ RUN apt-get install -y make
 WORKDIR /workspace
 COPY watcher.c watcher.h ./
 COPY Makefile-mac watcher-mac.m ./
-#COPY watcher-mac.swift ./
 
 # Mac: aarch64
 RUN make -f Makefile-mac CC=aarch64-apple-darwin22-clang OPT=--target=aarch64-apple-darwin22
