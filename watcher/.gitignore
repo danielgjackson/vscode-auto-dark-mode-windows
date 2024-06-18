@@ -2,6 +2,10 @@
 *.obj
 *.o
 watcher-win.exe
+watcher-lin
 watcher-lin-x64
 watcher-lin-arm
 watcher-mac
+watcher-mac-x64
+watcher-mac-arm
+listing.txt

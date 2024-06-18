@@ -54,9 +54,8 @@ WORKDIR /workspace
 COPY watcher.c watcher.h ./
 COPY Makefile-mac watcher-mac.m ./
 
-# Mac: aarch64
-RUN make -f Makefile-mac CC=aarch64-apple-darwin22-clang OPT=--target=aarch64-apple-darwin22
-
+# Mac: universal binary (aarch64 & x86_64)
+RUN make -f Makefile-mac BIN_NAME=watcher-mac LIPO=aarch64-apple-darwin22-lipo CC_X64=x86_64-apple-darwin22-clang TARGET_X64=--target=x86_64-apple-darwin22 CC_ARM=aarch64-apple-darwin22-clang TARGET_ARM=--target=aarch64-apple-darwin22
 
 
 # --- Extract build binaries ---

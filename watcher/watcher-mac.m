@@ -3,7 +3,8 @@
 // clang -framework Foundation watcher.c watcher-mac.m -o watcher-mac
 // ./watcher-mac
 
-// docker run -v .:/workspace --rm -it ghcr.io/shepherdjerred/macos-cross-compiler:latest aarch64-apple-darwin22-clang --target=aarch64-apple-darwin22 -framework Foundation watcher.c watcher-mac.m -o watcher-mac
+// docker run -v .:/workspace --rm -it ghcr.io/shepherdjerred/macos-cross-compiler:latest aarch64-apple-darwin22-clang --target=aarch64-apple-darwin22 -framework Foundation watcher.c watcher-mac.m -o watcher-mac-arm
+// docker run -v .:/workspace --rm -it ghcr.io/shepherdjerred/macos-cross-compiler:latest x86_64-apple-darwin22-clang --target=x86_64-apple-darwin22 -framework Foundation watcher.c watcher-mac.m -o watcher-mac-x64
 
 #include <TargetConditionals.h>
 #if !TARGET_OS_OSX
@@ -58,7 +59,7 @@
 // int main(int argc, const char * argv[]) {  return 0; }
 int watcher(watcher_callback callback, void *reference) {
     @autoreleasepool {
-        Watcher *watcher = [[Watcher alloc] initWithCallback:callback reference:reference];
+        __unused Watcher *watcher = [[Watcher alloc] initWithCallback:callback reference:reference];
         [[NSRunLoop mainRunLoop] run];
     }
     return -1;

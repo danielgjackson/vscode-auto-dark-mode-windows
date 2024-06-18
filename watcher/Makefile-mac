@@ -1,10 +1,14 @@
 # make -f Makefile-mac
 
 BIN_NAME = watcher-mac
-CC = clang
+CC_X64 = clang
+CC_ARM = clang
+TARGET_ARM = -target arm64-apple-macos11
+TARGET_X64 = -target x86_64-apple-macos10.12
 OPT =
 CFLAGS = -O3 -Wall
 LIBS = -framework Foundation
+LIPO = lipo
 
 #SRC = $(wildcard *.c)
 SRC = watcher.c watcher-mac.m
@@ -12,8 +16,16 @@ INC = $(wildcard *.h)
 
 all: $(BIN_NAME)
 
-$(BIN_NAME): Makefile-mac $(SRC) $(INC)
-	$(CC) $(OPT) -o $(BIN_NAME) $(CFLAGS) $(SRC) $(LIBS)
+$(BIN_NAME)-x64: Makefile-mac $(SRC) $(INC)
+	$(CC_X64) $(OPT) -o $(BIN_NAME)-x64 $(TARGET_X64) $(CFLAGS) $(SRC) $(LIBS)
+
+$(BIN_NAME)-arm: Makefile-mac $(SRC) $(INC)
+	$(CC_ARM) $(OPT) -o $(BIN_NAME)-arm $(TARGET_ARM) $(CFLAGS) $(SRC) $(LIBS)
+
+$(BIN_NAME): $(BIN_NAME)-x64 $(BIN_NAME)-arm
+	$(LIPO) -create -output $(BIN_NAME) $(BIN_NAME)-x64 $(BIN_NAME)-arm
+	# List architectures
+	$(LIPO) -archs $(BIN_NAME)
 
 clean:
-	rm -f *.o $(BIN_NAME)
+	rm -f *.o $(BIN_NAME) $(BIN_NAME)-x64 $(BIN_NAME)-arm
