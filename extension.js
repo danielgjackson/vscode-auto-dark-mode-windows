@@ -52,8 +52,10 @@ async function sleep(ms) {
 async function toggleTheme() {
 	try {
 
+/*
 		// Experimental: Toggle between tracking the system mode to set the theme and the opposite theme.
 		// Difficulty: No built-in way to detect the system mode.
+		// Approach doesn't work as theme is not updated
 
 		let autoOnDark = null;
 		let autoOffDark = null;
@@ -62,13 +64,13 @@ async function toggleTheme() {
 			// Automatic theme detection is initially enabled
 			autoOnDark = doesThemeMatchMode(true);
 			await setVSAutoDetect(false);
-			await sleep(1000);
+			await sleep(2000);
 			autoOffDark = doesThemeMatchMode(true);
 		} else {
 			// Automatic theme detection is initially disabled
 			autoOffDark = doesThemeMatchMode(true);
 			await setVSAutoDetect(true);
-			await sleep(1000);
+			await sleep(2000);
 			autoOnDark = doesThemeMatchMode(true);
 		}
 
@@ -82,8 +84,8 @@ async function toggleTheme() {
 		} else {
 			statusMessage(`Theme already changed after toggling auto mode.`);
 		}
+*/
 
-/*
 		// Built-in tracking hides theme changes, so disable it
 		await setVSAutoDetect(false);
 
@@ -99,7 +101,7 @@ async function toggleTheme() {
 				statusMessage(`${setDark ? 'Set Dark' : 'Set Light'}`);
 			}
 		}
-*/
+
 	} catch(e) {
 		console.error(e);
 		vscode.window.showErrorMessage(`Error toggling theme`);
