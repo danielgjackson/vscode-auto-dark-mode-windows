@@ -28,7 +28,7 @@ del watcher.obj watcher-win.obj
 GOTO END
 
 :ERROR
-ECHO ERROR: An error occured.
+ECHO ERROR: An error occurred.
 pause
 GOTO END
 

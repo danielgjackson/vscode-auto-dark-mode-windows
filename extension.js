@@ -1,31 +1,105 @@
 // VS Code Extension - Toggle Light/Dark Theme
 // Dan Jackson, 2019-2024
 
-// NOTE: Built-in command for toggle:  workbench.action.toggleLightDarkThemes  (broken in 1.89 when tracking system theme)
-
-
 const vscode = require('vscode');
 
 let statusBarItem = null;
 let currentStatusMessage = null;
 let currentStatusTimeout = null;
 
-function getTheme(dark) {
-	const workbenchConfiguration = vscode.workspace.getConfiguration('workbench');
-	const theme = workbenchConfiguration.get(dark ? 'preferredDarkColorTheme' : 'preferredLightColorTheme');
-	return theme;
+
+// Built-in tracking blocks theme changes
+function isVSAutoDetect() {
+	return vscode.workspace.getConfiguration('window').get('autoDetectColorScheme');
+}
+async function setVSAutoDetect(newTrackingState) {
+	if (isVSAutoDetect() != newTrackingState) {
+		await vscode.workspace.getConfiguration('window').update('autoDetectColorScheme', newTrackingState, vscode.ConfigurationTarget.Global);
+	}
 }
 
-function toggleTheme() {
+// Determine the desired theme for light/dark mode
+function getCurrentTheme() {
+	return vscode.workspace.getConfiguration('workbench').get('colorTheme');
+}
+
+// Determine the desired theme for light/dark mode
+function getThemeForMode(dark) {
+	return vscode.workspace.getConfiguration('workbench').get(dark ? 'preferredDarkColorTheme' : 'preferredLightColorTheme');;
+}
+
+// Determine if the theme matches a particular mode
+function doesThemeMatchMode(dark) {
+	return getCurrentTheme() === getThemeForMode(dark);
+}
+
+// Sets the theme to a specific mode
+async function setThemeForMode(dark) {
+	const currentTheme = getCurrentTheme();
+	const modeTheme = getThemeForMode(dark);
+	if (currentTheme === modeTheme) {
+		return false;	// already set
+	}
+	await vscode.workspace.getConfiguration('workbench').update('colorTheme', modeTheme, vscode.ConfigurationTarget.Global);
+	return true;
+}
+
+async function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Toggle the theme between light and dark
+async function toggleTheme() {
 	try {
-		const currentTheme = vscode.workspace.getConfiguration('workbench').get('colorTheme');
-		const isDark = currentTheme === getTheme(true);
-		const setDark = !isDark;
-		const newTheme = getTheme(setDark);
-		if (newTheme && newTheme !== currentTheme) {
-			vscode.workspace.getConfiguration('workbench').update('colorTheme', newTheme, vscode.ConfigurationTarget.Global);
-			statusMessage(`${setDark ? 'Dark' : 'Light'}`);
+
+		// Experimental: Toggle between tracking the system mode to set the theme and the opposite theme.
+		// Difficulty: No built-in way to detect the system mode.
+
+		let autoOnDark = null;
+		let autoOffDark = null;
+
+		if (isVSAutoDetect()) {
+			// Automatic theme detection is initially enabled
+			autoOnDark = doesThemeMatchMode(true);
+			await setVSAutoDetect(false);
+			await sleep(1000);
+			autoOffDark = doesThemeMatchMode(true);
+		} else {
+			// Automatic theme detection is initially disabled
+			autoOffDark = doesThemeMatchMode(true);
+			await setVSAutoDetect(true);
+			await sleep(1000);
+			autoOnDark = doesThemeMatchMode(true);
 		}
+
+		// Determine if the theme matches the mode
+		if (autoOnDark === autoOffDark) {
+			// Turn off auto mode
+			await setVSAutoDetect(false);
+			// Use built-in command to toggle theme
+			await vscode.commands.executeCommand('workbench.action.toggleLightDarkThemes');
+			statusMessage(`Theme matches auto mode -- toggled off`);
+		} else {
+			statusMessage(`Theme already changed after toggling auto mode.`);
+		}
+
+/*
+		// Built-in tracking hides theme changes, so disable it
+		await setVSAutoDetect(false);
+
+		// Determine which theme to switch to
+		const setDark = !doesThemeMatchMode(true);
+		if (true) {
+			// Use built-in command to toggle theme
+			await vscode.commands.executeCommand('workbench.action.toggleLightDarkThemes');
+			statusMessage(`${setDark ? 'Toggle Dark' : 'Toggle Light'}`);
+		} else {
+			// Manually set theme
+			if (await setThemeForMode(setDark)) {
+				statusMessage(`${setDark ? 'Set Dark' : 'Set Light'}`);
+			}
+		}
+*/
 	} catch(e) {
 		console.error(e);
 		vscode.window.showErrorMessage(`Error toggling theme`);
@@ -49,12 +123,7 @@ function updateStatusBarItem() {
 		text = text + ' ' + currentStatusMessage;
 	}
 	statusBarItem.text = text;
-	const autoDetectColorScheme = vscode.workspace.getConfiguration('window').get('autoDetectColorScheme');
-	if (autoDetectColorScheme) {
-		statusBarItem.tooltip = `Toggle dark/light theme.\nTracking system theme.`;
-	} else {
-		statusBarItem.tooltip = `Toggle dark/light theme.\nSet 'window.autoDetectColorScheme' to track system theme.`;
-	}
+	statusBarItem.tooltip = `Toggle dark/light theme.`;
 	statusBarItem.show();
 }
 
