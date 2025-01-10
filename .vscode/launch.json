@@ -6,7 +6,15 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Extension",
+			"name": "Run Extension",
+			"type": "extensionHost",
+			"request": "launch",
+			"args": [
+				"--extensionDevelopmentPath=${workspaceFolder}"
+			]
+		},
+		{
+			"name": "Extension (Old)",
 			"type": "extensionHost",
 			"request": "launch",
 			"runtimeExecutable": "${execPath}",
@@ -24,9 +32,11 @@
 				"--extensionTestsPath=${workspaceFolder}/test"
 			]
 		},
+
+
 		{
-			"name": "Run Web Extension in VS Code",
-			"type": "pwa-extensionHost",
+			"name": "Run Web Extension in VS Code (Old)",
+			"type": "extensionHost",
 			"debugWebWorkerHost": true,
 			"request": "launch",
 			"args": [
@@ -39,7 +49,7 @@
 			"preLaunchTask": "npm: watch-web"
 		},
 		{
-			"name": "Extension Tests in VS Code",
+			"name": "Extension Tests in VS Code (Old)",
 			"type": "extensionHost",
 			"debugWebWorkerHost": true,
 			"request": "launch",
@@ -52,6 +62,36 @@
 				"${workspaceFolder}/dist/web/**/*.js"
 			],
 			"preLaunchTask": "npm: watch-web"
+		},
+
+		{
+			"name": "Run Web Extension",
+			"type": "extensionHost",
+			"debugWebWorkerHost": true,
+			"request": "launch",
+			"args": [
+				"--extensionDevelopmentPath=${workspaceFolder}",
+				"--extensionDevelopmentKind=web"
+			],
+			"outFiles": [
+				"${workspaceFolder}/dist/web/**/*.js"
+			],
+			"preLaunchTask": "${defaultBuildTask}"
+		},
+		{
+			"name": "Extension Tests",
+			"type": "extensionHost",
+			"debugWebWorkerHost": true,
+			"request": "launch",
+			"args": [
+				"--extensionDevelopmentPath=${workspaceFolder}",
+				"--extensionDevelopmentKind=web",
+				"--extensionTestsPath=${workspaceFolder}/dist/web/test/suite/index"
+			],
+			"outFiles": [
+				"${workspaceFolder}/dist/web/**/*.js"
+			],
+			"preLaunchTask": "${defaultBuildTask}"
 		}
 	]
 }

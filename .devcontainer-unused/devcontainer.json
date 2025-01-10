@@ -1,0 +1,8 @@
+{
+    //"image": "mcr.microsoft.com/devcontainers/base:alpine-3.20",
+    "build": { "dockerfile": "Dockerfile" },
+    //"customizations": { "vscode": { "extensions": ["..."] } },
+    //"forwardPorts": [3000],
+    //"postCreateCommand": "bash -i -c 'nvm install --lts'",
+    "postCreateCommand": "npm install"
+}

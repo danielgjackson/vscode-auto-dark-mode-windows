@@ -10,6 +10,7 @@
         "danielgjackson",
         "danjackson",
         "dbus",
+        "devcontainers",
         "dpkg",
         "DUNICODE",
         "ENDLOCAL",
@@ -35,6 +36,7 @@
         "municode",
         "mydbus",
         "nonatomic",
+        "noninteractive",
         "POPD",
         "PUSHD",
         "SETLOCAL",
@@ -45,5 +47,13 @@
         "VCVARSALL",
         "windres",
         "wmain"
-    ]
+    ],
+	"files.exclude": {
+		"dist": false // set this to true to hide the "dist" folder with the compiled JS files
+	},
+	"search.exclude": {
+		"dist": true // set this to false to include "dist" folder in search results
+	},
+	// Turn off tsc task auto detection since we have the necessary tasks as npm scripts
+	"typescript.tsc.autoDetect": "off"
 }

@@ -1,5 +1,5 @@
 // VS Code Extension - Toggle Light/Dark Theme
-// Dan Jackson, 2019-2024
+// Dan Jackson, 2019-2025
 
 const vscode = require('vscode');
 
@@ -44,13 +44,20 @@ async function setThemeForMode(dark) {
 	return true;
 }
 
-async function sleep(ms) {
-	return new Promise(resolve => setTimeout(resolve, ms));
-}
+// async function sleep(ms) {
+// 	return new Promise(resolve => setTimeout(resolve, ms));
+// }
 
 // Toggle the theme between light and dark
 async function toggleTheme() {
 	try {
+
+/*
+		New possible approach: 
+		* When the system theme is not being tracked: toggle the current theme between light and dark.
+		* When the system theme is being tracked: swap the preferred light/dark themes and, on supported platforms (non-web), track the system theme changes and reset the preferred schemes to their original values (if this is possible to determine, including if the names are translated?)
+*/
+
 
 /*
 		// Experimental: Toggle between tracking the system mode to set the theme and the opposite theme.
@@ -89,18 +96,18 @@ async function toggleTheme() {
 		// Built-in tracking hides theme changes, so disable it
 		await setVSAutoDetect(false);
 
-		// Determine which theme to switch to
-		const setDark = !doesThemeMatchMode(true);
-		if (true) {
+		// // Determine which theme to switch to
+		// const setDark = !doesThemeMatchMode(true);
+		// if (true) {
 			// Use built-in command to toggle theme
 			await vscode.commands.executeCommand('workbench.action.toggleLightDarkThemes');
-			statusMessage(`${setDark ? 'Toggle Dark' : 'Toggle Light'}`);
-		} else {
-			// Manually set theme
-			if (await setThemeForMode(setDark)) {
-				statusMessage(`${setDark ? 'Set Dark' : 'Set Light'}`);
-			}
-		}
+			statusMessage('Toggle Dark/Light');
+		// } else {
+		// 	// Manually set theme
+		// 	if (await setThemeForMode(setDark)) {
+		// 		statusMessage(`${setDark ? 'Set Dark' : 'Set Light'}`);
+		// 	}
+		// }
 
 	} catch(e) {
 		console.error(e);
@@ -110,8 +117,21 @@ async function toggleTheme() {
 
 function activate(context) {
 	const commandId = 'auto-dark-mode-windows.toggle';
-	let disposable = vscode.commands.registerCommand(commandId, toggleTheme);
-	context.subscriptions.push(disposable);
+
+	{
+		let disposable = vscode.commands.registerCommand(commandId, toggleTheme);
+		context.subscriptions.push(disposable);
+	}
+
+	// "activationEvents": [ "onCommand:workbench.action.toggleLightDarkThemes" ]
+	// workbench.action.toggleLightDarkThemes
+	if (true) {
+		let disposable = vscode.commands.registerCommand("workbench.action.toggleLightDarkThemes", () => {
+			statusMessage(`DEBUG: System toggle command fired`);
+		});
+		context.subscriptions.push(disposable);
+	}
+
 	statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
 	statusBarItem.command = commandId;
 	context.subscriptions.push(statusBarItem);

@@ -7,16 +7,21 @@
 ![Visual Studio Marketplace Downloads](https://vsmarketplacebadge.apphb.com/downloads/danielgjackson.auto-dark-mode-windows.svg)
 -->
 
-This extension provides a status bar icon to quickly toggle between light/dark themes in VS Code.  This may be useful for anyone working under significantly changing background or reflected light levels. 
+This extension provides a status bar icon to quickly toggle between light/dark themes in VS Code.  
+<!-- This will also work as a temporary override if the system theme being tracked (except on the web).  -->
+This may be useful for anyone working under significantly changing background or reflected light levels. 
 
 ![Toggle light/dark theme with a status bar icon](screenshot.png)
 
-> If you are on Windows and would like to quickly toggle the whole system dark mode, you might be interested in the utility: [Toggle Dark/Light Mode](https://github.com/danielgjackson/toggle-dark-light).
+> If you are on Windows and would like to quickly toggle the whole system dark mode, you might be interested in this utility: [Toggle Dark/Light Mode](https://github.com/danielgjackson/toggle-dark-light).
 
 
 ## Features
 
-* *Toggle Theme* command: `auto-dark-mode-windows.toggle` (see [History](#history) for name choice!)
+* A *Toggle Theme* command to switch between light/dark themes: `auto-dark-mode-windows.toggle` (see [History](#history) for name choice!)
+<!--
+* The toggling works, even while system theme changes are also being tracked (except on the web), as this extension provides its own tracking of the system theme.
+-->
 * Status bar icon to quickly perform the theme switch: <code>&#x1F313;&#xFE0E;</code>
 * Default hot-key: `Ctrl`+`Alt`+`Shift`+`T`
 
@@ -28,16 +33,21 @@ None.
 
 ## Extension Settings
 
-No additional settings are provided.  
+No additional settings are provided by the extension itself.  
 
 * Your choice of VS Code light/dark theme are used, you can adjust these by opening VS Code's settings with the command *Preferences: Open Settings (UI)*, or through the menu: *Code* (on Mac) or *File* (on Windows/Linux) / *Preferences* / *Settings*, then:
 
     * *Workbench* / *Appearance* / *Preferred Light Color Theme* (`workbench.preferredLightColorTheme`)
     * *Workbench* / *Appearance* / *Preferred Dark Color Theme* (`workbench.preferredDarkColorTheme`)
 
-* The operating system's light/dark mode can be automatically tracked by enabling the following VS Code setting: (in which case, the *Toggle Theme* command will temporarily override the system theme):
+* While the operating system's light/dark mode can be automatically tracked by enabling the following VS Code setting: 
 
     * *Window* / *Auto Detect Color Scheme* (`window.autoDetectColorScheme`)
+
+   ...since *VS Code V1.89 (April 2024)*, this prevents any temporary changes to the theme (which prevents toggling the theme), so this setting is disabled by the extension.  
+   <!--
+   Instead, this extension provides its own tracking of the system theme (not currently possible in web versions of VS Code) so that the *Toggle Theme* command can be used to temporarily override the system theme.
+   -->
 
 * The status bar icon (<code>&#x1F313;&#xFE0E;</code>) can be hidden/shown by right-clicking the status bar and selecting *Toggle Light/Dark Theme (Extension)*.
 
