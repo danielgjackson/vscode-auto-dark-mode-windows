@@ -93,21 +93,21 @@ async function toggleTheme() {
 		}
 */
 
-		// Built-in tracking hides theme changes, so disable it
+		// Built-in tracking hides theme changes in more recent VS Code versions, so disable it
 		await setVSAutoDetect(false);
 
 		// // Determine which theme to switch to
-		// const setDark = !doesThemeMatchMode(true);
-		// if (true) {
+		const setDark = !doesThemeMatchMode(true);
+		if (false) {
 			// Use built-in command to toggle theme
 			await vscode.commands.executeCommand('workbench.action.toggleLightDarkThemes');
 			statusMessage('Toggle Dark/Light');
-		// } else {
-		// 	// Manually set theme
-		// 	if (await setThemeForMode(setDark)) {
-		// 		statusMessage(`${setDark ? 'Set Dark' : 'Set Light'}`);
-		// 	}
-		// }
+		} else {
+			// Manually set theme
+			if (await setThemeForMode(setDark)) {
+				statusMessage(`${setDark ? 'Set Dark' : 'Set Light'}`);
+			}
+		}
 
 	} catch(e) {
 		console.error(e);
@@ -127,7 +127,7 @@ function activate(context) {
 	// workbench.action.toggleLightDarkThemes
 	if (true) {
 		let disposable = vscode.commands.registerCommand("workbench.action.toggleLightDarkThemes", () => {
-			statusMessage(`DEBUG: System toggle command fired`);
+			statusMessage(`(DEBUG: System toggle command fired)`);
 		});
 		context.subscriptions.push(disposable);
 	}

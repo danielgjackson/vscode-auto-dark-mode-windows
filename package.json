@@ -7,7 +7,7 @@
 		"url": "https://github.com/danielgjackson/vscode-auto-dark-mode-windows.git"
 	},
 	"publisher": "danielgjackson",
-	"version": "1.0.11",
+	"version": "1.0.12",
 	"license": "MIT",
 	"engines": {
 		"vscode": "^1.96.0"
