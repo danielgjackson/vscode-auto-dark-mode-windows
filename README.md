@@ -1,5 +1,8 @@
 # Toggle Light/Dark Theme - VS Code Extension
 
+> [!IMPORTANT]
+> VS Code 1.89 has included [some changes](https://code.visualstudio.com/updates/v1_89#_auto-detect-system-color-mode-improvements) that have broken the ability to temporarily override the theme while also tracking system theme change events -- see: [issue #17](https://github.com/danielgjackson/vscode-auto-dark-mode-windows/issues/17).
+
 <!--
 ![Visual Studio Marketplace Version](https://vsmarketplacebadge.apphb.com/version-short/danielgjackson.auto-dark-mode-windows.svg)
 ![Visual Studio Marketplace Rating](https://vsmarketplacebadge.apphb.com/rating-short/danielgjackson.auto-dark-mode-windows.svg)
