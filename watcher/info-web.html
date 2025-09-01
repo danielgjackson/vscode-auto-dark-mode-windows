@@ -1,26 +1,37 @@
+<!DOCTYPE html>
 <html>
 <head>
 <title>Web Preferred Color Scheme</title>
+<style>
+/* Style the page based on the preferred color scheme. None of this is required to detect the scheme. */
+:root {
+    color-scheme: light dark;
+}
+body {
+    background-color: light-dark(white, black);
+    color: light-dark(black, white);
+}
+</style>
 </head>
 <body>
 </body>
 <script>
 function watcher(callback, reference) {
-    if (!window.matchMedia) {
-        return -1;
-    }
+    if (!window.matchMedia) return false;
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const listener = (event) => {
         callback(event.matches ? 0 : 1, reference);       // 0=dark, 1=light
     };
     mediaQuery.addEventListener('change', listener);
     listener(mediaQuery);
+    return true;
 }
 
 function callback(value, reference) {
     console.log(value);
     document.querySelector('body').innerText = value;
 }
+
 watcher(callback);
 </script>
 </html>
