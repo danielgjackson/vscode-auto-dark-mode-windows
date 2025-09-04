@@ -52,7 +52,20 @@
 			}
 		],
 		"configuration": {
-			"title": "Toggle Light/Dark Theme"
+			"title": "Toggle Light/Dark Theme",
+			"type": "object",
+			"properties": {
+				"autoDarkMode.darkTheme": {
+					"type": "string",
+					"default": "",
+					"description": "The original dark theme"
+				},
+				"autoDarkMode.lightTheme": {
+					"type": "string",
+					"default": "",
+					"description": "The original light theme"
+				}
+			}
 		}
 	},
 	"scripts": {
