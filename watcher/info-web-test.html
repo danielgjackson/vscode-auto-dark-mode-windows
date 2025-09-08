@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Web Preferred Color Scheme</title>
+<style>
+/*
+:root {
+    color-scheme: light dark;
+}
+body {
+    background-color: light-dark(white, black);
+    color: light-dark(black, white);
+}
+*/
+body {
+    font-family: sans-serif;
+}
+</style>
+</head>
+<body>
+</body>
+<script>
+const themeDetector = new Worker("./info-web-test.js");
+themeDetector.onmessage = (e) => {
+    console.log("Main: Message received from ThemeDetector: " + JSON.stringify(e.data));
+    const message = 'Main-ThemeDetector: Background detected: ' + (e.data ? 'light' : 'dark');
+    console.log(message);
+    document.querySelector('body').innerText = message;
+};
+themeDetector.postMessage(null); // start detection
+
+/*
+function watcher(callback, reference) {
+    if (!window.matchMedia) return false;
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const listener = (event) => {
+        callback(event.matches ? 0 : 1, reference);       // 0=dark, 1=light
+    };
+    mediaQuery.addEventListener('change', listener);
+    listener(mediaQuery);
+    return true;
+}
+
+function callback(value, reference) {
+    const message = 'Window Detected: ' + (value ? 'Light' : 'Dark');
+    console.log(message);
+    document.querySelector('body').innerText = message;
+}
+
+watcher(callback);
+*/
+</script>
+</html>
