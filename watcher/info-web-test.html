@@ -2,52 +2,68 @@
 <html>
 <head>
 <title>Web Preferred Color Scheme</title>
+<link rel="icon" href="data:">
 <style>
-/*
 :root {
     color-scheme: light dark;
 }
 body {
     background-color: light-dark(white, black);
     color: light-dark(black, white);
-}
-*/
-body {
+
     font-family: sans-serif;
+    white-space: pre;
 }
 </style>
+<!--
+<script src="./info-web-test.js"></script>
+-->
 </head>
 <body>
-</body>
-<script>
-const themeDetector = new Worker("./info-web-test.js");
-themeDetector.onmessage = (e) => {
-    console.log("Main: Message received from ThemeDetector: " + JSON.stringify(e.data));
-    const message = 'Main-ThemeDetector: Background detected: ' + (e.data ? 'light' : 'dark');
-    console.log(message);
-    document.querySelector('body').innerText = message;
-};
-themeDetector.postMessage(null); // start detection
+<script type="module">
+import ThemeDetector from "./info-web-test.js";
 
-/*
-function watcher(callback, reference) {
-    if (!window.matchMedia) return false;
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const listener = (event) => {
-        callback(event.matches ? 0 : 1, reference);       // 0=dark, 1=light
+// Try using the WebWorker-based theme detector
+if (1) {
+    const themeDetectorWorker = new Worker("./info-web-test.js");
+    themeDetectorWorker.onmessage = (e) => {
+        const value = e.data;
+        const message = 'WebWorker: Background detected: ' + (value == null ? 'null' : value ? 'light' : 'dark');
+        console.log(message);
+        document.querySelector('body').innerText += message + '\n';
     };
-    mediaQuery.addEventListener('change', listener);
-    listener(mediaQuery);
-    return true;
+    themeDetectorWorker.postMessage(null); // start detection
 }
 
-function callback(value, reference) {
-    const message = 'Window Detected: ' + (value ? 'Light' : 'Dark');
-    console.log(message);
-    document.querySelector('body').innerText = message;
+// Locally test the WebWorker-based theme detector
+if (1) {
+    const themeDetector = new ThemeDetector();
+    themeDetector.startWatching((value) => {    // 0=dark, 1=light
+        const message = 'Page-based: Background detected: ' + (value == null ? 'null' : value ? 'light' : 'dark');
+        console.log(message);
+        document.querySelector('body').innerText += message + '\n';
+        postMessage(value);
+    }, 1000);
 }
 
-watcher(callback);
-*/
+// Use the page-based theme detector
+if (1) {
+    function watchMediaQuery(callback, reference) {
+        if (!window.matchMedia) return false;
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        const listener = (event) => {
+            callback(event.matches ? 0 : 1, reference);       // 0=dark, 1=light
+        };
+        mediaQuery.addEventListener('change', listener);
+        listener(mediaQuery);
+        return true;
+    }
+    watchMediaQuery((value, reference) => {
+        const message = 'Media query: ' + (value ? 'light' : 'dark');
+        console.log(message);
+        document.querySelector('body').innerText += message + '\n';
+    });
+}
 </script>
+</body>
 </html>
